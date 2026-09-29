@@ -6,6 +6,9 @@ window.NinhoCloud=(()=>{
  async function signUp(email,password,name){if(!enabled)throw Error("Nuvem indisponível");const redirectTo=(location.protocol==="http:"||location.protocol==="https:")?(location.origin+location.pathname):undefined;const options={data:{name}};if(redirectTo)options.emailRedirectTo=redirectTo;const r=await sb.auth.signUp({email,password,options});if(r.error)throw r.error;if(r.data.session&&r.data.user){const pr=await sb.from("profiles").upsert({id:r.data.user.id,name:name||"",updated_at:new Date().toISOString()});if(pr.error)throw pr.error}return r}
  async function signIn(email,password){const r=await sb.auth.signInWithPassword({email,password});if(r.error)throw r.error;return r}
  async function resendConfirmation(email){if(!enabled)throw Error("Nuvem indisponível");const redirectTo=(location.protocol==="http:"||location.protocol==="https:")?(location.origin+location.pathname):undefined;const options={};if(redirectTo)options.emailRedirectTo=redirectTo;const {error}=await sb.auth.resend({type:"signup",email,options});if(error)throw error;return true}
+ async function requestPasswordReset(email){const redirectTo=(location.protocol==="http:"||location.protocol==="https:")?(location.origin+location.pathname):undefined;const {error}=await sb.auth.resetPasswordForEmail(email,redirectTo?{redirectTo}:undefined);if(error)throw error;return true}
+ async function updatePassword(password){const {error}=await sb.auth.updateUser({password});if(error)throw error;return true}
+ function onAuthChange(cb){return sb.auth.onAuthStateChange((event,session)=>cb(event,session))}
  async function signOut(){return sb.auth.signOut()}
  async function session(){return (await sb.auth.getSession()).data.session}
  async function user(){return (await sb.auth.getUser()).data.user}
@@ -24,5 +27,5 @@ window.NinhoCloud=(()=>{
  async function joinFamily(code){const {data,error}=await sb.rpc("join_family",{join_code:code.toUpperCase()});if(error)throw error;return data}
  async function leaveFamily(){const {error}=await sb.rpc("leave_family");if(error)throw error;return true}
  function realtime(familyId,onShared,onMembers){if(!familyId)return;if(channel)sb.removeChannel(channel);const refresh=()=>onShared?.();channel=sb.channel("family-"+familyId).on("postgres_changes",{event:"*",schema:"public",table:"tasks",filter:`family_id=eq.${familyId}`},refresh).on("postgres_changes",{event:"*",schema:"public",table:"events",filter:`family_id=eq.${familyId}`},refresh).on("postgres_changes",{event:"*",schema:"public",table:"shopping_items",filter:`family_id=eq.${familyId}`},refresh).on("postgres_changes",{event:"*",schema:"public",table:"family_members",filter:`family_id=eq.${familyId}`},()=>onMembers?.()).subscribe()}
- return {enabled,sb,signUp,signIn,resendConfirmation,signOut,session,user,profile,updateProfile,loadFamily,familyMembers,loadShared,addTask,setTaskDone,addEvent,addShopping,setShoppingDone,deleteShopping,createFamily,joinFamily,leaveFamily,realtime};
+ return {enabled,sb,signUp,signIn,resendConfirmation,requestPasswordReset,updatePassword,onAuthChange,signOut,session,user,profile,updateProfile,loadFamily,familyMembers,loadShared,addTask,setTaskDone,addEvent,addShopping,setShoppingDone,deleteShopping,createFamily,joinFamily,leaveFamily,realtime};
 })();
