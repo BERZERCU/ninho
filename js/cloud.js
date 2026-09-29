@@ -25,7 +25,9 @@ window.NinhoCloud=(()=>{
  async function deleteShopping(id){const {error}=await sb.from("shopping_items").delete().eq("id",id);if(error)throw error}
  async function createFamily(name){const {data,error}=await sb.rpc("create_family",{family_name:name});if(error)throw error;return data}
  async function joinFamily(code){const {data,error}=await sb.rpc("join_family",{join_code:code.toUpperCase()});if(error)throw error;return data}
+ async function setMemberRole(userId,role){const {error}=await sb.rpc("set_family_member_role",{target_user:userId,new_role:role});if(error)throw error;return true}
+ async function removeMember(userId){const {error}=await sb.rpc("remove_family_member",{target_user:userId});if(error)throw error;return true}
  async function leaveFamily(){const {error}=await sb.rpc("leave_family");if(error)throw error;return true}
  function realtime(familyId,onShared,onMembers){if(!familyId)return;if(channel)sb.removeChannel(channel);const refresh=()=>onShared?.();channel=sb.channel("family-"+familyId).on("postgres_changes",{event:"*",schema:"public",table:"tasks",filter:`family_id=eq.${familyId}`},refresh).on("postgres_changes",{event:"*",schema:"public",table:"events",filter:`family_id=eq.${familyId}`},refresh).on("postgres_changes",{event:"*",schema:"public",table:"shopping_items",filter:`family_id=eq.${familyId}`},refresh).on("postgres_changes",{event:"*",schema:"public",table:"family_members",filter:`family_id=eq.${familyId}`},()=>onMembers?.()).subscribe()}
- return {enabled,sb,signUp,signIn,resendConfirmation,requestPasswordReset,updatePassword,onAuthChange,signOut,session,user,profile,updateProfile,loadFamily,familyMembers,loadShared,addTask,setTaskDone,addEvent,addShopping,setShoppingDone,deleteShopping,createFamily,joinFamily,leaveFamily,realtime};
+ return {enabled,sb,signUp,signIn,resendConfirmation,requestPasswordReset,updatePassword,onAuthChange,signOut,session,user,profile,updateProfile,loadFamily,familyMembers,loadShared,addTask,setTaskDone,addEvent,addShopping,setShoppingDone,deleteShopping,createFamily,joinFamily,setMemberRole,removeMember,leaveFamily,realtime};
 })();
