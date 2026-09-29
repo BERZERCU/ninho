@@ -15,7 +15,7 @@ window.NinhoCloud=(()=>{
  async function familyMembers(){const {data,error}=await sb.rpc("family_members_list");if(error)throw error;return (data||[]).map((m,i)=>({id:m.user_id,name:m.name||"Membro",role:m.role||"adult",initial:(m.name||"M")[0].toUpperCase(),color:["#b9cfb5","#e3b8a6","#b9c9d7","#d9c49a","#d1b8d5"][i%5]}))}
  async function saveFamily(familyId,payload){const {error}=await sb.from("family_snapshots").upsert({family_id:familyId,payload,updated_at:new Date().toISOString()});if(error)throw error}
  async function createFamily(name){const {data,error}=await sb.rpc("create_family",{family_name:name});if(error)throw error;return data}
- async function joinFamily(code){const {data,error}=await sb.rpc("join_family",{join_code:code.toUpperCase()});if(error)throw error;return data}
- function realtime(familyId,onChange){if(!familyId)return;if(channel)sb.removeChannel(channel);channel=sb.channel("family-"+familyId).on("postgres_changes",{event:"*",schema:"public",table:"family_snapshots",filter:`family_id=eq.${familyId}`},p=>onChange(p.new?.payload)).subscribe()}
- return {enabled,sb,signUp,signIn,resendConfirmation,signOut,session,user,profile,updateProfile,loadFamily,familyMembers,saveFamily,createFamily,joinFamily,realtime};
+ async function joinFamily(code){const {data,error}=await sb.rpc("join_family",{join_code:code.toUpperCase()});if(error)throw error;return data}\n async function leaveFamily(){const {error}=await sb.rpc("leave_family");if(error)throw error;return true}
+ function realtime(familyId,onChange,onMembers){if(!familyId)return;if(channel)sb.removeChannel(channel);channel=sb.channel("family-"+familyId).on("postgres_changes",{event:"*",schema:"public",table:"family_snapshots",filter:`family_id=eq.${familyId}`},p=>onChange(p.new?.payload)).on("postgres_changes",{event:"*",schema:"public",table:"family_members",filter:`family_id=eq.${familyId}`},()=>onMembers?.()).subscribe()}
+ return {enabled,sb,signUp,signIn,resendConfirmation,signOut,session,user,profile,updateProfile,loadFamily,familyMembers,saveFamily,createFamily,joinFamily,leaveFamily,realtime};
 })();
