@@ -5,5 +5,15 @@
   "display": "standalone",
   "background_color": "#f7f3eb",
   "theme_color": "#f7f3eb",
-  "description": "Organização simples para a família."
+  "description": "Organização simples para a família.",
+  "icons": [
+    {
+      "src": "icons/ninho-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "scope": "./",
+  "id": "./"
 }
