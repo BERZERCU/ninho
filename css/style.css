@@ -8,3 +8,5 @@
 .row-title{overflow-wrap:anywhere}
 .detail-form select{width:100%;border:1px solid var(--line);background:#faf8f4;border-radius:13px;padding:13px;font:inherit}
 #contentEditForm button[type="submit"]{border:0;border-radius:13px;padding:14px;background:var(--sage);color:white;font-weight:800}
+
+.recovery-sent{margin-top:14px;padding:20px 18px;border:1px solid #dce6d7;border-radius:20px;background:#f1f5ed;text-align:center}.recovery-sent-icon{font-size:36px;margin-bottom:5px}.recovery-sent h2{margin:4px 0 8px;font-family:Georgia,serif;font-size:22px;color:#30352f}.recovery-sent p{margin:6px 0;color:#667064;font-size:13px;line-height:1.5}.recovery-sent .full{margin-top:15px}
