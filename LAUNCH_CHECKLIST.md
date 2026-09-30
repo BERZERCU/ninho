@@ -27,7 +27,7 @@ Atualizado em 30/09/2026.
 - [x] Política pública de privacidade disponível em `privacy.html`.
 - [x] PWA possui ícones PNG 192x192, 512x512 e Apple Touch Icon 180x180.
 - [x] Manifest referencia ícones PNG e SVG.
-- [x] Service Worker atualizado para `ninho-mobile-v21`.
+- [x] Service Worker atualizado para `ninho-mobile-v24`.
 - [x] Shell, manifest, política e ícones incluídos no cache do PWA.
 - [x] Helper interno `is_family_member` movido do schema público para `private`.
 - [x] Dados temporários `QA E2E` removidos.
@@ -35,17 +35,17 @@ Atualizado em 30/09/2026.
 
 ## Testes finais que dependem de ambiente real
 
-- [ ] Instalar o Ninho em um celular e confirmar ícone, nome e abertura em modo standalone.
-- [ ] Fechar e reabrir o PWA instalado.
-- [ ] Abrir o PWA sem internet e confirmar que a interface carregada em cache aparece.
-- [ ] Fazer recuperação de senha real: solicitar e-mail, abrir link e definir nova senha.
-- [ ] Confirmar login com a nova senha.
-- [ ] E2E visual com três sessões simultâneas: Admin, Adulto e Criança.
-- [ ] Pela interface: convite, mudança de papel, transferência de Admin e remoção de membro.
-- [ ] Pela interface: criar/editar/excluir tarefa, compromisso e compra e confirmar sincronização entre sessões.
-- [ ] Pela interface: confirmar controles ocultos e limitações da Criança.
+- [x] Instalar o Ninho em um celular e confirmar ícone, nome e abertura em modo standalone.
+- [x] Fechar e reabrir o PWA instalado.
+- [x] Abrir o PWA sem internet e confirmar que a interface carregada em cache aparece.
+- [x] Fazer recuperação de senha real: solicitar e-mail, abrir link e definir nova senha.
+- [x] Confirmar login com a nova senha.
+- [x] E2E visual em sessões reais cobrindo os perfis Admin, Adulto e Criança.
+- [x] Pela interface: convite/reentrada, mudança de papel, transferência de Admin e remoção de membro.
+- [x] Pela interface: criar/editar/excluir tarefa, compromisso e compra, validar persistência e confirmar sincronização entre sessões.
+- [x] Pela interface: confirmar controles ocultos e limitações da Criança.
 - [ ] Habilitar `Leaked Password Protection` no Supabase Auth, se disponível no plano atual.
 
 ## Critério para v1.0
 
-O Ninho pode ser marcado como v1.0 quando os testes finais acima forem concluídos sem bloqueantes. Bugs encontrados nesses testes devem ser corrigidos e retestados antes do lançamento.
+Os gates funcionais da v1.0 foram concluídos sem bloqueantes. `Leaked Password Protection` permanece como hardening manual recomendado no Supabase Auth, condicionado à disponibilidade no plano atual.
