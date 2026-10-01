@@ -27,6 +27,7 @@ Atualizado em 01/10/2026.
 - [x] Política pública de privacidade disponível em `privacy.html`.
 - [x] Página pública de instruções de exclusão disponível em `delete-account.html`.
 - [x] Exclusão de conta validada E2E: exclusão pela interface, logout automático e login posterior bloqueado.
+- [x] Conta Admin principal é impedida de excluir a conta antes de transferir a administração para outro Adulto.
 - [x] SMTP customizado configurado e entrega real de e-mail validada.
 - [x] Template de confirmação de cadastro personalizado e validado em e-mail real.
 - [x] Confirmação de e-mail abre a produção e permite login.
