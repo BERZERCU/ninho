@@ -23,6 +23,8 @@ jobs:
           node --check js/app.js
           node --check js/cloud.js
           node --check js/config.js
+          node --check js/captcha.js
+          node --check js/captcha-auth.js
           node --check sw.js
 
       - name: JSON syntax
