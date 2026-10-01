@@ -55,8 +55,8 @@ Atualizado em 01/10/2026.
 - [x] Cadastro externo: receber confirmação, confirmar endereço e entrar.
 - [x] Recuperação externa: receber e-mail, definir nova senha, entrar e receber aviso de senha alterada.
 - [x] Exclusão de conta de teste: excluir, encerrar sessão e confirmar que as credenciais antigas não autenticam mais.
-- [ ] Habilitar `Leaked Password Protection` no Supabase Auth, se disponível no plano atual.
+- [x] `Leaked Password Protection` verificado: indisponível no plano Free atual; recurso requer Supabase Pro ou superior.
 
 ## Critério para v1.0
 
-Os gates funcionais da v1.0 foram concluídos sem bloqueantes. Os fluxos reais de cadastro, confirmação, recuperação de senha, notificação de alteração de senha e exclusão de conta também foram validados. `Leaked Password Protection` permanece como hardening manual recomendado no Supabase Auth, condicionado à disponibilidade no plano atual.
+Os gates funcionais da v1.0 foram concluídos sem bloqueantes. Os fluxos reais de cadastro, confirmação, recuperação de senha, notificação de alteração de senha e exclusão de conta também foram validados. `Leaked Password Protection` foi verificado e não está disponível no plano Free atual; o recurso poderá ser habilitado após eventual upgrade para Supabase Pro ou superior.
