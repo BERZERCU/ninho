@@ -27,9 +27,9 @@ Este documento separa a v1.0 funcional, que já passou pelo E2E, dos controles a
 
 ## Antes de divulgação pública ampla
 
-- [ ] Ativar CAPTCHA/Cloudflare Turnstile no Supabase Auth. O frontend já envia tokens nos fluxos de cadastro, login, recuperação de senha e reenvio de confirmação; falta cadastrar a Secret Key no Supabase, ativar a proteção e concluir o E2E real.
-- [ ] Revisar `Authentication > Rate Limits`. Durante o QA houve respostas `429 over_email_send_rate_limit`; dimensionar o limite de e-mails para o volume esperado.
-- [ ] Configurar política de senha no Supabase com mínimo de 8 caracteres ou mais e requisitos adequados ao público do Ninho.
+- [x] Cloudflare Turnstile ativado no Supabase Auth e validado E2E em login, cadastro e recuperação de senha; tentativas inválidas foram rejeitadas pelo backend.
+- [x] `Authentication > Rate Limits` revisado. Mantidos os limites atuais, incluindo 30 e-mails/h, após confirmar que os `429 over_email_send_rate_limit` observados ocorreram durante QA intensivo.
+- [x] Política de senha configurada no Supabase: mínimo de 8 caracteres com maiúscula, minúscula, número e símbolo; rejeição de senha fraca e aceitação de senha válida verificadas no backend.
 - [ ] Proteger a branch `main` no GitHub/ruleset e exigir os checks `Ninho QA` e Vercel antes de mudanças de produção.
 - [ ] Confirmar 2FA/MFA nas contas administrativas do GitHub e Supabase e manter acesso de recuperação seguro.
 - [ ] Migrar o remetente temporário Gmail para domínio próprio + provedor transacional antes de uma divulgação maior; configurar SPF, DKIM e DMARC.
@@ -39,7 +39,7 @@ Este documento separa a v1.0 funcional, que já passou pelo E2E, dos controles a
 
 ## Observações técnicas
 
-O Security Advisor ainda lista as 10 RPCs `SECURITY DEFINER` acessíveis a `authenticated`. Elas são endpoints intencionais do aplicativo; cada uma precisa continuar sendo tratada como API privilegiada, com validação de `auth.uid()`, família e papel no backend. O alerta de leaked password permanece enquanto o projeto estiver no plano Free.
+O Security Advisor lista 11 RPCs `SECURITY DEFINER` acessíveis a `authenticated`, incluindo `complete_task_with_proof`. Elas são endpoints intencionais do aplicativo; cada uma precisa continuar sendo tratada como API privilegiada, com validação de `auth.uid()`, família e papel no backend. O alerta de leaked password permanece enquanto o projeto estiver no plano Free.
 
 O Performance Advisor reporta apenas índices ainda não utilizados. Com a base atual pequena, isso não é motivo para removê-los; revisar novamente quando houver tráfego real suficiente para produzir estatísticas representativas.
 

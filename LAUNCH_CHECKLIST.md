@@ -39,7 +39,7 @@ Atualizado em 01/10/2026.
 - [x] Template de alteração de e-mail personalizado no Supabase.
 - [x] PWA possui ícones PNG 192x192, 512x512 e Apple Touch Icon 180x180.
 - [x] Manifest referencia ícones PNG e SVG.
-- [x] Service Worker atualizado para `ninho-mobile-v30`.
+- [x] Service Worker atualizado para `ninho-mobile-v31`.
 - [x] Shell, manifest, política, instruções de exclusão e ícones incluídos no cache do PWA.
 - [x] Helper interno `is_family_member` movido do schema público para `private`.
 - [x] `join_family` e RPCs sensíveis revisadas com `search_path` restrito.
