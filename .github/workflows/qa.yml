@@ -26,7 +26,11 @@ jobs:
           node --check js/captcha.js
           node --check js/captcha-auth.js
           node --check js/features.js
+          node --check js/push.js
           node --check sw.js
+
+      - name: Web Push behavior
+        run: node --test tests/push.test.cjs
 
       - name: JSON syntax
         run: |
