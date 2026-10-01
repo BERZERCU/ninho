@@ -25,6 +25,7 @@ jobs:
           node --check js/config.js
           node --check js/captcha.js
           node --check js/captcha-auth.js
+          node --check js/features.js
           node --check sw.js
 
       - name: JSON syntax
