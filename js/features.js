@@ -59,6 +59,7 @@ window.loadActivity=async function(){
 };
 
 async function showDeviceActivityNotification(message){
+  if(window.NinhoPush?.isActive())return;
   if(!("Notification" in window)||Notification.permission!=="granted"||document.visibilityState==="visible")return;
   try{
     const reg=await navigator.serviceWorker?.getRegistration();

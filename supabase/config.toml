@@ -1,4 +1,6 @@
-[functions.delete-account]\nverify_jwt = false\n
+[functions.delete-account]
+verify_jwt = false
+
 
 # Local Auth email templates. Hosted Supabase templates are configured in
 # Authentication > Email Templates; these files are kept as the source of truth.
@@ -18,3 +20,8 @@ content_path = "./supabase/templates/email_change.html"
 enabled = true
 subject = "Sua senha do Ninho foi alterada"
 content_path = "./supabase/templates/password_changed_notification.html"
+
+[functions.family-push]
+# POST uses a Vault-backed worker token; GET serves the public key only.
+verify_jwt = false
+
