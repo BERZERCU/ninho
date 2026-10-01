@@ -27,7 +27,7 @@
   }catch(err){
    const msg=(err?.message||"").toLowerCase();
    if(msg.includes("email not confirmed")||msg.includes("email_not_confirmed"))showVerify($("#authEmail").value.trim(),"Seu e-mail ainda não foi confirmado. Abra o link enviado ou reenvie abaixo.");
-   else if(msg.includes("captcha"))toast("Verificação de segurança inválida. Tente novamente.");
+   else if(msg.includes("password should contain")||msg.includes("password should be at least")||err?.code==="weak_password")toast("Senha muito fraca. Use pelo menos 8 caracteres, com maiúscula, minúscula, número e símbolo.");\n   else if(msg.includes("captcha"))toast("Verificação de segurança inválida. Tente novamente.");
    else if(err?.status===429||err?.code==="over_email_send_rate_limit"||msg.includes("rate limit")||msg.includes("too many"))toast("Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.");
    else toast(err.message||"Não foi possível entrar");
   }finally{
