@@ -1,0 +1,49 @@
+name: Ninho encrypted backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *' # 03:17 Brasilia; GitHub may delay scheduled jobs.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ninho-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.NINHO_BACKUP_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install database client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+          python3 -m pip install -r scripts/requirements-backup.txt
+      - name: Export, encrypt and verify
+        env:
+          NINHO_BACKUP_DB_URL: ${{ secrets.NINHO_BACKUP_DB_URL }}
+          NINHO_BACKUP_SERVICE_KEY: ${{ secrets.NINHO_BACKUP_SERVICE_KEY }}
+          NINHO_BACKUP_PASSPHRASE: ${{ secrets.NINHO_BACKUP_PASSPHRASE }}
+        run: python3 scripts/backup.py
+      - name: Save only encrypted files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ninho-encrypted-backup-${{ github.run_id }}
+          path: |
+            backup-output/ninho-backup.tar.gz.enc
+            backup-output/ninho-backup.tar.gz.enc.sha256
+          if-no-files-found: error
+          retention-days: 30
+      - name: Remove runner output
+        if: always()
+        run: rm -rf backup-output

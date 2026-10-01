@@ -32,6 +32,11 @@ jobs:
       - name: Web Push behavior
         run: node --test tests/push.test.cjs
 
+      - name: Backup encryption and integrity
+        run: |
+          python3 -m pip install -r scripts/requirements-backup.txt
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+
       - name: JSON syntax
         run: |
           node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8'))"

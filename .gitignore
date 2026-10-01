@@ -1,0 +1,6 @@
+backup-output/
+backup/
+__pycache__/
+*.tar.gz
+*.tar.gz.enc
+*.tar.gz.enc.sha256
