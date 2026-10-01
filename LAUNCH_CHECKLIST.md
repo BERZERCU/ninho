@@ -9,6 +9,7 @@ Atualizado em 01/10/2026.
 - [x] GitHub `main` sincronizado com as migrations aplicadas no Supabase.
 - [x] Supabase em estado `ACTIVE_HEALTHY`.
 - [x] RLS habilitado nas tabelas expostas.
+- [x] Grants da Data API reduzidos ao mínimo necessário; `anon` sem acesso direto às tabelas do Ninho.
 - [x] Criança não pode criar, editar ou excluir conteúdo compartilhado.
 - [x] Criança só pode concluir tarefa atribuída a ela.
 - [x] Criança pode marcar item de compras.
@@ -17,6 +18,7 @@ Atualizado em 01/10/2026.
 - [x] Adulto não pode administrar papéis da família.
 - [x] Admin pode administrar membros e papéis.
 - [x] Transferência de administração validada no backend e pela interface real.
+- [x] RPC de transferência reforçada no backend para aceitar somente destino com papel `adult`.
 - [x] Remoção de membro validada no backend e pela interface real.
 - [x] Isolamento de membros por família validado.
 - [x] Realtime configurado e validado para tarefas, eventos, compras e membros.
@@ -37,9 +39,13 @@ Atualizado em 01/10/2026.
 - [x] Template de alteração de e-mail personalizado no Supabase.
 - [x] PWA possui ícones PNG 192x192, 512x512 e Apple Touch Icon 180x180.
 - [x] Manifest referencia ícones PNG e SVG.
-- [x] Service Worker atualizado para `ninho-mobile-v27`.
+- [x] Service Worker atualizado para `ninho-mobile-v28`.
 - [x] Shell, manifest, política, instruções de exclusão e ícones incluídos no cache do PWA.
 - [x] Helper interno `is_family_member` movido do schema público para `private`.
+- [x] `join_family` e RPCs sensíveis revisadas com `search_path` restrito.
+- [x] Supabase JS fixado em versão exata no frontend para evitar atualização silenciosa da dependência.
+- [x] Headers de segurança adicionados no Vercel (`nosniff`, anti-frame, referrer, permissions e CSP base).
+- [x] GitHub Actions `Ninho QA` criado e primeira execução concluída com `success`.
 - [x] Dados temporários `QA E2E` removidos.
 - [x] Nenhuma Criança temporária permaneceu na família real.
 
