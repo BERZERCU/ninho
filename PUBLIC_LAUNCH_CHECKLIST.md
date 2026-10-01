@@ -27,7 +27,7 @@ Este documento separa a v1.0 funcional, que já passou pelo E2E, dos controles a
 
 ## Antes de divulgação pública ampla
 
-- [ ] Ativar CAPTCHA/Cloudflare Turnstile no Supabase Auth e integrar o token nos fluxos de cadastro, login e recuperação de senha.
+- [ ] Ativar CAPTCHA/Cloudflare Turnstile no Supabase Auth. O frontend já envia tokens nos fluxos de cadastro, login, recuperação de senha e reenvio de confirmação; falta cadastrar a Secret Key no Supabase, ativar a proteção e concluir o E2E real.
 - [ ] Revisar `Authentication > Rate Limits`. Durante o QA houve respostas `429 over_email_send_rate_limit`; dimensionar o limite de e-mails para o volume esperado.
 - [ ] Configurar política de senha no Supabase com mínimo de 8 caracteres ou mais e requisitos adequados ao público do Ninho.
 - [ ] Proteger a branch `main` no GitHub/ruleset e exigir os checks `Ninho QA` e Vercel antes de mudanças de produção.
