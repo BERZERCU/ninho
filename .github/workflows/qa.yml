@@ -1,0 +1,35 @@
+name: Ninho QA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: JavaScript syntax
+        run: |
+          node --check js/app.js
+          node --check js/cloud.js
+          node --check js/config.js
+          node --check sw.js
+
+      - name: JSON syntax
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
+
+      - name: Production dependency pin
+        run: |
+          grep -Fq 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2' index.html
