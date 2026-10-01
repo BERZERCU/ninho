@@ -1,6 +1,6 @@
+var familyActivityItems=[];
 (()=>{
 const q=s=>document.querySelector(s);
-let familyActivityItems=[];
 let confirmResolver=null;
 let proofPreviewUrl=null;
 let subscribedFamilyId=null;
