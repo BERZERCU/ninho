@@ -1,0 +1,32 @@
+name: Ninho health monitor
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '8,23,38,53 * * * *'
+  push:
+    branches: [main]
+    paths: ['scripts/health-check.cjs', 'tests/health.test.cjs', '.github/workflows/monitor.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: ninho-health-monitor
+  cancel-in-progress: false
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify monitoring logic
+        run: node --test tests/health.test.cjs
+      - name: Check production and backups
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NINHO_BACKUP_ENABLED: ${{ vars.NINHO_BACKUP_ENABLED }}
+        run: node scripts/health-check.cjs
