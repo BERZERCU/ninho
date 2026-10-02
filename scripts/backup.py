@@ -47,6 +47,17 @@ def run(command, *, stdin=None, env=None, label='command'):
             if marker in stderr:
                 diagnostic = message
                 break
+        if diagnostic == 'check credentials, network and tool versions':
+            # Emit only fixed vocabulary, never arbitrary stderr or credential substrings.
+            vocabulary = ['fatal', 'password', 'authentication', 'sasl', 'scram', 'tenant', 'user',
+                'database', 'does not exist', 'connection', 'server', 'closed', 'unexpectedly',
+                'timeout', 'timed out', 'resolve', 'name', 'address', 'network', 'unreachable',
+                'refused', 'certificate', 'ssl', 'tls', 'invalid', 'port', 'integer',
+                'option', 'parameter', 'unsupported', 'circuit breaker', 'upstream',
+                'permission', 'denied', 'pg_hba', 'no password', 'no route', 'could not',
+                'remaining', 'reserved', 'too many', 'maxclients', 'not found']
+            matches = [word for word in vocabulary if word in stderr]
+            diagnostic += '; safe error keywords: ' + ', '.join(matches or ['none'])
         raise BackupError(f'{label} failed (exit {result.returncode}); {diagnostic}')
     return result.stdout
 
