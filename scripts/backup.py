@@ -49,7 +49,11 @@ def run(command, *, stdin=None, env=None, label='command'):
                 break
         if diagnostic == 'check credentials, network and tool versions':
             # Emit only fixed vocabulary, never arbitrary stderr or credential substrings.
-            vocabulary = ['fatal', 'password', 'authentication', 'sasl', 'scram', 'tenant', 'user',
+            vocabulary = ['reset by peer', 'reset', 'peer', 'eof', 'end of file', 'terminated', 'broken pipe',
+                'gssapi', 'fe_sendauth', 'synchronization', 'socket', 'resource', 'temporary',
+                'service', 'failure', 'failed', 'error', 'no such', 'file', 'directory',
+                'cannot', 'couldn', 'not', 'support', 'access', 'connect', 'refuse',
+                'fatal', 'password', 'authentication', 'sasl', 'scram', 'tenant', 'user',
                 'database', 'does not exist', 'connection', 'server', 'closed', 'unexpectedly',
                 'timeout', 'timed out', 'resolve', 'name', 'address', 'network', 'unreachable',
                 'refused', 'certificate', 'ssl', 'tls', 'invalid', 'port', 'integer',
