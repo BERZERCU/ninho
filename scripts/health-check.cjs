@@ -47,7 +47,11 @@ async function main() {
       if (!settings || typeof settings.external !== 'object') throw Error('Resposta Auth inesperada');
     }),
     check('Banco e Data API',async()=>{
-      const rows=await (await request(cfg.supabaseUrl+'/rest/v1/profiles?select=id&limit=0',{apikey:cfg.supabasePublishableKey})).json();
+      const response=await fetch(cfg.supabaseUrl+'/rest/v1/profiles?select=id&limit=0',{headers:{apikey:cfg.supabasePublishableKey},signal:AbortSignal.timeout(20000)});
+      const rows=await response.json();
+      // A SQL permission denial is expected for anonymous profiles and proves DB responsiveness.
+      if (response.status===401 && rows.code==='42501') return;
+      if (!response.ok) throw Error('HTTP '+response.status);
       if (!Array.isArray(rows) || rows.length) throw Error('Resposta Data API inesperada');
     }),
     check('Endpoint público do Push',async()=>{
