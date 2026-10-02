@@ -95,3 +95,13 @@ Referências oficiais:
 - https://supabase.com/docs/guides/platform/backups
 - https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore
 - https://supabase.com/docs/reference/cli/supabase-db-dump
+
+## Ajuste identificado no ensaio funcional (02/10/2026)
+
+Login/família restaurada e criação/conclusão de tarefa com upload de foto e persistência passaram pela interface de teste. O primeiro teste Realtime falhou: o destino tinha a publicação supabase_realtime sem tabelas. Recriar explicitamente a participação antes do teste funcional:
+
+```sql
+ALTER PUBLICATION supabase_realtime ADD TABLE public.events, public.family_activity, public.family_members, public.family_snapshots, public.shopping_items, public.tasks;
+```
+
+Aplicado e conferido no destino isolado; reteste pela interface ainda pendente. A exportação schema.sql não restaurou essa participação automaticamente.
