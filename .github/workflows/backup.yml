@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['scripts/backup.py']
+    paths: ['scripts/backup.py', '.github/workflows/backup.yml']
   schedule:
     - cron: '17 6 * * *' # 03:17 Brasilia; GitHub may delay scheduled jobs.
 
@@ -41,7 +41,7 @@ jobs:
       - name: Save only encrypted files
         uses: actions/upload-artifact@v4
         with:
-          name: ninho-encrypted-backup-${{ github.run_id }}
+          name: ninho-encrypted-backup-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             backup-output/ninho-backup.tar.gz.enc
             backup-output/ninho-backup.tar.gz.enc.sha256
