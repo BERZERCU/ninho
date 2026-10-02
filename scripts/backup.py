@@ -27,6 +27,9 @@ def run(command, *, stdin=None, env=None, label='command'):
         diagnostic = 'check credentials, network and tool versions'
         stderr = result.stderr.lower()
         for marker, message in [
+            ('unsupported startup parameter', 'pooler rejected a startup parameter'),
+            ('no password supplied', 'database connection has no usable password'),
+            ('maxclients', 'pooler session connection limit reached'),
             ('wrong password', 'database password rejected; check password and URI encoding'),
             ('authentication error', 'pooler authentication failed; check database password, project user and pooler address'),
             ('authentication failed', 'database authentication failed; check database password and project user'),
@@ -48,8 +51,8 @@ def run(command, *, stdin=None, env=None, label='command'):
     return result.stdout
 
 def sql(db_url, query):
-    env = {**os.environ, 'PGDATABASE':db_url, 'PGSSLMODE':'require', 'PGOPTIONS':'-c default_transaction_read_only=on -c statement_timeout=120000'}
-    return json.loads(run(['psql','-X','-A','-t','-v','ON_ERROR_STOP=1'],stdin=query,env=env,label='database inventory'))
+    env = {**os.environ, 'PGDATABASE':db_url, 'PGSSLMODE':'require', 'PGOPTIONS':''}
+    return json.loads(run(['psql','-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin="SET default_transaction_read_only=on; SET statement_timeout=120000;\n"+query,env=env,label='database inventory'))
 
 def fingerprint_query():
     parts = [f"SELECT '{t}' AS name,count(*) AS rows,md5(coalesce(string_agg(md5(to_jsonb(x)::text),'' ORDER BY to_jsonb(x)::text),'')) AS digest FROM public.{t} x" for t in TABLES]
