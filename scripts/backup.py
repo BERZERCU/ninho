@@ -27,6 +27,11 @@ def run(command, *, stdin=None, env=None, label='command'):
         diagnostic = 'check credentials, network and tool versions'
         stderr = result.stderr.lower()
         for marker, message in [
+            ('wrong password', 'database password rejected; check password and URI encoding'),
+            ('authentication error', 'pooler authentication failed; check database password, project user and pooler address'),
+            ('authentication failed', 'database authentication failed; check database password and project user'),
+            ('invalid connection option', 'database connection URL contains an invalid connection option'),
+            ('missing "="', 'database connection URL format was not recognized'),
             ('password authentication failed', 'database password rejected; check password and URI encoding'),
             ('tenant or user not found', 'pooler project/user not found; recopy the project Session pooler URL'),
             ('could not translate host name', 'database hostname could not be resolved'),
