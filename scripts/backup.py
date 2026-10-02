@@ -24,7 +24,22 @@ def run(command, *, stdin=None, env=None, label='command'):
     result = subprocess.run(command, input=stdin, text=True, capture_output=True, env=env, timeout=1800)
     if result.returncode:
         # Tool stderr may contain connection strings. Keep logs free of credentials/data.
-        raise BackupError(f'{label} failed (exit {result.returncode}); check credentials, network and tool versions')
+        diagnostic = 'check credentials, network and tool versions'
+        stderr = result.stderr.lower()
+        for marker, message in [
+            ('password authentication failed', 'database password rejected; check password and URI encoding'),
+            ('tenant or user not found', 'pooler project/user not found; recopy the project Session pooler URL'),
+            ('could not translate host name', 'database hostname could not be resolved'),
+            ('connection timed out', 'database network connection timed out'),
+            ('connection refused', 'database server refused the connection'),
+            ('invalid percent-encoded token', 'database URL contains invalid password percent encoding'),
+            ('invalid uri query parameter', 'database URL contains an invalid query parameter'),
+            ('ssl', 'database TLS connection failed'),
+        ]:
+            if marker in stderr:
+                diagnostic = message
+                break
+        raise BackupError(f'{label} failed (exit {result.returncode}); {diagnostic}')
     return result.stdout
 
 def sql(db_url, query):
