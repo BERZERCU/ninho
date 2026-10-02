@@ -2,6 +2,9 @@ name: Ninho encrypted backup
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/backup.py']
   schedule:
     - cron: '17 6 * * *' # 03:17 Brasilia; GitHub may delay scheduled jobs.
 
@@ -14,7 +17,7 @@ concurrency:
 
 jobs:
   backup:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.NINHO_BACKUP_ENABLED == 'true')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event_name == 'push' || vars.NINHO_BACKUP_ENABLED == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
