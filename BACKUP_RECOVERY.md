@@ -1,6 +1,6 @@
 # Ninho — backup e recuperação
 
-Status em 01/10/2026: rotina preparada; credenciais, primeira execução real e ensaio de restauração PENDENTES. Não considerar o backup operacional até concluir os três.
+Status em 02/10/2026: exportação real, abertura local e integridade validadas; agendamento diário ativado pelo administrador. Banco, políticas de Storage e Vault restaurados em projeto isolado. Ensaio funcional do aplicativo restaurado ainda PENDENTE.
 
 ## Cobertura e metas
 
@@ -25,7 +25,7 @@ Status em 01/10/2026: rotina preparada; credenciais, primeira execução real e 
 | NINHO_BACKUP_PASSPHRASE | Senha aleatória de pelo menos 32 caracteres sem quebras de linha; guardar cópia em gerenciador de senhas. Sem ela os backups são irrecuperáveis. |
 
 3. Revisar administradores do GitHub, confirmar 2FA e proteger main antes de habilitar secrets de produção em Actions. Alterações maliciosas no workflow podem acessar secrets; restringir quem pode mudar o código.
-4. Abrir **Actions → Ninho encrypted backup → Run workflow**, escolhendo main. Conferir execução verde e artefato `ninho-encrypted-backup-<run_id>`. Uma execução apenas ignorada/skipped não é backup.
+4. Abrir **Actions → Ninho encrypted backup → Run workflow**, escolhendo main. Conferir execução verde e artefato `ninho-encrypted-backup-<run_id>-<run_attempt>`. Uma execução apenas ignorada/skipped não é backup.
 5. Baixar o artefato. Verificar checksum e integridade com a senha correta conforme abaixo; não extrair em pasta pública/sincronizada.
 6. Somente após a primeira execução validada, em **Variables** criar `NINHO_BACKUP_ENABLED` com valor `true`. Até então o agendamento fica desabilitado; o disparo manual continua disponível.
 7. Ativar alertas do GitHub Actions para workflows com falha e conferir diariamente a última execução concluída. Os logs não exibem dados nem valores de credenciais.
@@ -52,7 +52,9 @@ Não restaurar nem resetar a produção para testar. Usar projeto Supabase de te
 
 1. Validar o pacote e anotar commit, horário, contagens e extensões no manifesto.
 2. Habilitar as extensões necessárias no destino antes da importação, especialmente pg_net, pg_cron e Vault. Manter qualquer cron/worker de Push desligado durante TODO o ensaio.
-3. Revisar `schema.sql`: `private.kick_push` contém URL do projeto original. Substituir essa URL pela do destino na definição da função antes de importar. Nunca deixar a restauração de teste chamar produção.
+3. Para restauração gerenciada, criar uma cópia de roles.sql removendo a linha `GRANT SET ON PARAMETER "log_min_messages" TO "supabase_realtime_admin";`: o papel postgres do destino não pode conceder essa permissão administrativa. Manter o original intacto. O ensaio confirmou rollback integral quando essa linha falha.
+
+   Revisar `schema.sql`: `private.kick_push` contém URL do projeto original. Substituir essa URL pela do destino na definição da função antes de importar. Nunca deixar a restauração de teste chamar produção.
 4. Seguir a ordem oficial: roles.sql, schema.sql, data.sql, em uma transação, com ON_ERROR_STOP=1 e triggers desativados durante a carga. Antes do schema, revogar defaults de tabelas públicas para anon/authenticated; confirmar grants e RLS depois. Rodar apenas no destino vazio, conferindo cuidadosamente a connection string.
 
 ```sh
@@ -79,9 +81,15 @@ Preservar evidências e uma cópia do estado atual. Selecionar o backup anterior
 ## Evidência atual
 
 - Testes locais com conteúdo sintético: criptografia/descriptografia, senha incorreta, detecção de arquivo alterado, rejeição de caminho fora do pacote e preservação das condições de políticas de Storage.
-- Exportação real: pendente de credentials nos Repository secrets.
-- Backup automático: desabilitado até definir NINHO_BACKUP_ENABLED=true.
-- Ensaio de restauração: pendente, sem alterações na produção.
+- Exportação real concluída: https://github.com/BERZERCU/ninho/actions/runs/37017103216, artefato `ninho-encrypted-backup-37017103216-1`, com nova senha guardada pelo administrador. Cópia anterior usa senha perdida; não usar para recuperação.
+- Administrador confirmou abertura local e `verify_backup.py` aprovado. Agendamento diário ativado por NINHO_BACKUP_ENABLED=true; primeira execução agendada após ativação ainda deve ser conferida.
+- Destino isolado: `ninho-teste-restauracao` (`mqpjujirwooqzzirzwrr`), PostgreSQL 17.11. Produção permaneceu sem restauração/reset.
+- Banco restaurado: 6 auth.users, 4 famílias, 5 membros, 5 perfis, 4 snapshots, 35 atividades, 1 tarefa, 1 inscrição Push. Todos os fingerprints coincidem com o manifesto, normalizando enabled=true na inscrição Push; no destino ela permanece disabled.
+- RLS habilitado nas 9 tabelas públicas e na fila privada; bucket task-proofs privado, 5242880 bytes e JPEG/PNG/WebP; três políticas Storage restauradas.
+- Backup contém 0 objetos Storage: transferência de fotos não foi exercitada neste ensaio.
+- Três nomes Vault confirmados. Nenhum cron, nenhuma inscrição Push ativa, nenhuma função public/private referenciando o projeto de produção.
+- Restauração dos componentes do banco validada. Ainda faltam ensaio funcional no frontend isolado, login/roles/Realtime e uma foto de teste; não declarar recuperação completa antes disso.
+- Descoberta operacional: psql deve receber a URI explicitamente por --dbname; PGDATABASE isolado causou tentativa de conexão por socket local no runner. Diagnóstico só imprime categorias/vocabulário fixo, nunca stderr bruto.
 
 Referências oficiais:
 - https://supabase.com/docs/guides/platform/backups
