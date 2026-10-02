@@ -1,6 +1,6 @@
 # Ninho — backup e recuperação
 
-Status em 02/10/2026: exportação real, abertura local e integridade validadas; agendamento diário ativado pelo administrador. Banco, políticas de Storage e Vault restaurados em projeto isolado. Ensaio funcional do aplicativo restaurado ainda PENDENTE.
+Status em 02/10/2026: exportação real, abertura local e integridade validadas; agendamento diário ativado pelo administrador. Banco, políticas de Storage e Vault restaurados em projeto isolado. Ensaio dos fluxos principais do aplicativo restaurado VALIDADO pela interface: login, família, tarefa/foto, Realtime e restrições da Criança. Recuperação de SMTP/CAPTCHA/Edge Functions/Push permanece fora desta validação.
 
 ## Cobertura e metas
 
@@ -88,7 +88,7 @@ Preservar evidências e uma cópia do estado atual. Selecionar o backup anterior
 - RLS habilitado nas 9 tabelas públicas e na fila privada; bucket task-proofs privado, 5242880 bytes e JPEG/PNG/WebP; três políticas Storage restauradas.
 - Backup contém 0 objetos Storage: transferência de fotos não foi exercitada neste ensaio.
 - Três nomes Vault confirmados. Nenhum cron, nenhuma inscrição Push ativa, nenhuma função public/private referenciando o projeto de produção.
-- Restauração dos componentes do banco validada. Ainda faltam ensaio funcional no frontend isolado, login/roles/Realtime e uma foto de teste; não declarar recuperação completa antes disso.
+- Restauração dos componentes do banco validada. Ensaio funcional do frontend isolado concluído: administrador confirmou login/família, tarefa concluída com foto persistente, Realtime entre dispositivos e bloqueio de edição/exclusão de tarefas de outros membros pelo perfil Criança. Fluxos de e-mail, Edge Functions e envio de Push não foram exercitados no destino.
 - Descoberta operacional: psql deve receber a URI explicitamente por --dbname; PGDATABASE isolado causou tentativa de conexão por socket local no runner. Diagnóstico só imprime categorias/vocabulário fixo, nunca stderr bruto.
 
 Referências oficiais:
@@ -104,4 +104,15 @@ Login/família restaurada e criação/conclusão de tarefa com upload de foto e 
 ALTER PUBLICATION supabase_realtime ADD TABLE public.events, public.family_activity, public.family_members, public.family_snapshots, public.shopping_items, public.tasks;
 ```
 
-Aplicado e conferido no destino isolado; reteste pela interface ainda pendente. A exportação schema.sql não restaurou essa participação automaticamente.
+Aplicado e conferido no destino isolado; reteste pela interface aprovado pelo administrador em 02/10/2026. Ambos os dispositivos devem usar a URL de teste e a mesma família. A exportação schema.sql não restaurou essa participação automaticamente.
+
+## Resultado do ensaio — 02/10/2026
+
+- Preview isolado: https://ninho-pm5zik8ti-connordygeras009-2197.vercel.app/ (branch qa/restore-drill-2026-10-02; não mesclar sua configuração com main).
+- Abertura local com senha guardada e integridade: aprovadas.
+- Recuperação do banco e comparação com manifesto: aprovadas; inscrição Push desativada intencionalmente.
+- Storage: bucket/políticas recuperados e upload/leitura de nova foto aprovados. O backup não continha fotos anteriores, portanto restauração de um objeto pré-existente ainda não foi testada.
+- Fluxos pela interface confirmados pelo administrador: login, família, tarefa/foto após recarga, Realtime entre dispositivos, restrições Criança em tarefas alheias.
+- Ensaio iniciado aproximadamente 13:14 e último teste confirmado 14:47 de Brasília; duração assistida ~1h33, incluindo instalação de psql e passos manuais. Não usar esse intervalo como RTO garantido.
+- SMTP/CAPTCHA, recuperação de senha, exclusão de conta via Edge Function e envio de Push no destino não validados. Cron/inscrições Push continuam desativados no teste.
+- O projeto de teste contém cópias dos dados reais e deve ser mantido somente enquanto necessário para o ensaio; a exclusão deve ser direcionada explicitamente ao projeto de teste.
