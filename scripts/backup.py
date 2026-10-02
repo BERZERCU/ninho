@@ -67,7 +67,7 @@ def run(command, *, stdin=None, env=None, label='command'):
 
 def sql(db_url, query):
     env = {**os.environ, 'PGDATABASE':db_url, 'PGSSLMODE':'require', 'PGOPTIONS':''}
-    return json.loads(run(['psql','-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin="SET default_transaction_read_only=on; SET statement_timeout=120000;\n"+query,env=env,label='database inventory'))
+    return json.loads(run(['psql','--dbname',db_url,'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin="SET default_transaction_read_only=on; SET statement_timeout=120000;\n"+query,env=env,label='database inventory'))
 
 def fingerprint_query():
     parts = [f"SELECT '{t}' AS name,count(*) AS rows,md5(coalesce(string_agg(md5(to_jsonb(x)::text),'' ORDER BY to_jsonb(x)::text),'')) AS digest FROM public.{t} x" for t in TABLES]
