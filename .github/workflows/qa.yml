@@ -39,6 +39,11 @@ jobs:
       - name: Managed child account security
         run: node --test tests/children.test.cjs
 
+      - name: Managed child migration on empty PostgreSQL
+        run: |
+          npm ci --prefix tests/db --ignore-scripts --no-audit --no-fund
+          npm test --prefix tests/db
+
       - name: Web Push behavior
         run: node --test tests/push.test.cjs
 
