@@ -1,5 +1,11 @@
 window.NINHO_CONFIG = {
-  supabaseUrl: "https://cspwqboqchwdsknfdakh.supabase.co",
-  supabasePublishableKey: "sb_publishable_Cvw0YdmMZAKQtuQv9gR6Gg_J-W_jnME",
-  turnstileSiteKey: "0x4AAAAAAFLDhe40f-zObW3a"
+  supabaseUrl: "https://mqpjujirwooqzzirzwrr.supabase.co",
+  supabasePublishableKey: "sb_publishable_h2USUN7WxC9XlU02DjpQnA_9fZMt3_S",
+  turnstileSiteKey: ""
 };
+document.addEventListener("DOMContentLoaded", () => {
+  const banner = document.createElement("div");
+  banner.textContent = "TESTE — CONTAS INFANTIS · sem alterações na produção";
+  banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:#9a3412;color:white;text-align:center;font:600 12px sans-serif;padding:6px;pointer-events:none";
+  document.body.appendChild(banner);
+});
