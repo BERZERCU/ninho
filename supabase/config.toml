@@ -32,3 +32,6 @@ verify_jwt = true
 # Public login validates the password through Auth with CAPTCHA and rate limits.
 [functions.child-login]
 verify_jwt = false
+
+[functions.close-family]
+verify_jwt = true
