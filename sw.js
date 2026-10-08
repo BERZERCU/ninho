@@ -1,4 +1,4 @@
-const C='ninho-mobile-v32',A=['./','./index.html','./privacy.html','./delete-account.html','./css/style.css','./js/features.js','./js/push.js','./js/app.js','./js/cloud.js','./js/config.js','./js/captcha.js','./js/captcha-auth.js','./manifest.webmanifest','./icons/ninho-icon.svg','./icons/ninho-192.png','./icons/ninho-512.png','./icons/apple-touch-icon.png'];
+const C='ninho-mobile-v33',A=['./','./index.html','./privacy.html','./terms.html','./delete-account.html','./css/style.css','./js/features.js','./js/push.js','./js/app.js','./js/cloud.js','./js/config.js','./js/captcha.js','./js/captcha-auth.js','./manifest.webmanifest','./icons/ninho-icon.svg','./icons/ninho-192.png','./icons/ninho-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(A))));
 self.addEventListener('activate',e=>e.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==C).map(k=>caches.delete(k))))])));
 self.addEventListener('fetch',e=>{
