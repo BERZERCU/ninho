@@ -15,6 +15,8 @@ revoke all on private.managed_children from public, anon, authenticated;
 create or replace function public.register_managed_child(p_child uuid, p_guardian uuid, p_family uuid, p_code text)
 returns void language plpgsql security definer set search_path='' as $$
 begin
+ -- Serialize registrations for the guardian across all of their families.
+ perform 1 from auth.users where id=p_guardian for update;
  perform 1 from public.family_members where user_id=p_guardian and family_id=p_family for update;
  if not exists(select 1 from public.family_members where user_id=p_guardian and family_id=p_family and role in ('admin','adult'))
  or exists(select 1 from private.managed_children where child_id=p_guardian)
