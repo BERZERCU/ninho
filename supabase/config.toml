@@ -25,3 +25,10 @@ content_path = "./supabase/templates/password_changed_notification.html"
 # POST uses a Vault-backed worker token; GET serves the public key only.
 verify_jwt = false
 
+
+[functions.managed-children]
+verify_jwt = true
+
+# Public login validates the password through Auth with CAPTCHA and rate limits.
+[functions.child-login]
+verify_jwt = false
