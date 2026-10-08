@@ -21,6 +21,9 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check js/app.js
+          node --check js/children.js
+          node --check supabase/functions/managed-children/handler.mjs
+          node --check supabase/functions/child-login/handler.mjs
           node --check js/close-family.js
           node --check js/cloud.js
           node --check js/config.js
@@ -32,6 +35,9 @@ jobs:
 
       - name: Family closure security
         run: node --test tests/close-family.test.cjs
+
+      - name: Managed child account security
+        run: node --test tests/children.test.cjs
 
       - name: Web Push behavior
         run: node --test tests/push.test.cjs
