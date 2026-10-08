@@ -2,7 +2,7 @@
  const version='2026-10-08';
  const button=$('#childAccountsBtn');
  const previous=refreshSettings;
- refreshSettings=function(){previous();button.classList.toggle('hide',!canManage());};
+ refreshSettings=function(){previous();button.classList.toggle('hide',!canManage());$('#personalDataBtn').classList.toggle('hide',!!NINHO_USER.managedChild);$('#editProfileBtn').classList.toggle('hide',!!NINHO_USER.managedChild);};
  async function showChildren(){
   if(!canManage())return;
   openDetail('Contas infantis','<p role="status">Carregando contas sob sua responsabilidade...</p>');
