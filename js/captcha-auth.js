@@ -22,7 +22,7 @@
    const res=authMode==="signup"?await NinhoCloud.signUp(email,password,$("#authName").value.trim(),securityToken):await NinhoCloud.signIn(email,password,securityToken);
    if(authMode==="signup"&&!res.data.session){showVerify(email);return}
    const p=await NinhoCloud.profile();
-   NINHO_USER={demo:false,id:p?.id||null,name:p?.name||email.split("@")[0],email:p?.email||email,phone:p?.phone||""};
+   NINHO_USER={demo:false,id:p?.id||null,name:p?.name||email.split("@")[0],managedChild:!!p?.managedChild,email:p?.managedChild?"Conta infantil":p?.email||email,phone:p?.phone||""};
    authScreen.classList.add("hide");await bootCloud();
   }catch(err){
    const msg=(err?.message||"").toLowerCase();
