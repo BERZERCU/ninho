@@ -10,6 +10,8 @@ begin
  perform set_config('request.jwt.claim.sub',guardian::text,true);
  fid:=(public.create_family('QA managed child')->>'family_id')::uuid;
  perform public.register_managed_child(child,guardian,fid,'N1234567890ABCDEF');
+ if (select name from public.profiles where id=child) is distinct from 'QA Child' then raise exception 'TEST FAILED: assigned profile name'; end if;
+ if (select name from public.managed_children_for_guardian(guardian) where child_id=child) is distinct from 'QA Child' then raise exception 'TEST FAILED: guardian display name'; end if;
  if (select role from public.family_members where user_id=child)<>'child' then raise exception 'TEST FAILED: initial role'; end if;
  if public.managed_child_lookup('N1234567890ABCDEF')<>child then raise exception 'TEST FAILED: lookup'; end if;
  if (select count(*) from public.managed_children_for_guardian(stranger))<>0 then raise exception 'TEST FAILED: stranger list'; end if;
