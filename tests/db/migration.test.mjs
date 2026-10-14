@@ -6,7 +6,7 @@ import { PGlite } from '@electric-sql/pglite';
 test('complete managed child migration installs on empty PostgreSQL and security fixtures roll back', async () => {
   const db = new PGlite();
   try {
-    for (const path of ['fixtures/base.sql', 'fixtures/family-rpcs.sql', '../../supabase/migrations/20261008113832_managed_children.sql']) {
+    for (const path of ['fixtures/base.sql', 'fixtures/family-rpcs.sql', '../../supabase/migrations/20261008113832_managed_children.sql', '../../supabase/migrations/20261014142823_managed_child_profile_name.sql']) {
       await db.exec(await readFile(new URL(path, import.meta.url), 'utf8'));
     }
     const checks = await db.exec(await readFile(new URL('../children-security.sql', import.meta.url), 'utf8'));
