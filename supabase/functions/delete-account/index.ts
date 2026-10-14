@@ -43,6 +43,18 @@ export default {
       );
     }
 
+    const { data: children, error: childrenError } = await ctx.supabaseAdmin
+      .rpc("managed_children_for_guardian", { p_guardian: user.id });
+    if (childrenError) {
+      return Response.json({ error: "Não foi possível verificar as contas infantis." }, { status: 503 });
+    }
+    if ((children ?? []).length > 0) {
+      return Response.json(
+        { error: "Exclua primeiro as contas infantis sob sua responsabilidade em Configurações → Contas infantis.", code: "MANAGED_CHILDREN_REQUIRE_REMOVAL" },
+        { status: 409 },
+      );
+    }
+
     const { error: deleteError } = await ctx.supabaseAdmin.auth.admin.deleteUser(user.id);
     if (deleteError) {
       console.error("delete-account auth deletion failed", deleteError);
