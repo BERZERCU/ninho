@@ -32,7 +32,7 @@ No real purchases, payment integration or production changes are included. Price
 1. Sign in with a test family and open **Meu avatar** on Today or in Settings.
 2. Create a fresh task assigned to the member being tested; complete it. Check +1.
 3. Reopen and complete it again. Balance must not increase.
-4. As Admin, open the avatar panel's **Experimentar o bônus Ninho+** and select simulated plus.
+4. As Admin, open the avatar panel's **Experimentar o plano Ninho+** and select simulated plus.
 5. Complete another fresh assigned task. Check +2 for the assignee, including a child member.
 6. In **Lojinha**, exchange points for clothing, then select **Vestir** in the wardrobe. Reload and check persistence.
 7. Return to simulated free. Owned clothes and the remaining balance must remain.
