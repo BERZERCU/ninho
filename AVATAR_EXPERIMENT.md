@@ -61,3 +61,19 @@ select cron.schedule('qa-plus-recurring','*/10 * * * *',
 The migration is under `supabase/experiments/migrations/20261015155325_qa_plus_features.sql`. `tests/plus-security.sql` verifies recurrence idempotency, calendars, pause/downgrade, capacity, cents, private data isolation, cross-family access and history retention using rollback fixtures.
 
 Manual acceptance is still required for the new screens and the next scheduled execution. This remains a QA-only draft; do not merge the branch into main or promote it to the original.
+
+## Conquista da semana — QA only (15 October)
+
+Children receive weekly ranking points from NEW insertions in the existing single-use task reward ledger, beginning with this feature's installation. No retroactive backfill; pre-existing completed tasks stay consumed. The wallet and shop spending are independent. Adults do not compete. Free/plus use the existing 1/2 point task rewards; no billing changes.
+
+Weeks run Monday 00:00 through Sunday in America/Sao_Paulo. Server time exclusively determines the current week; there is no public date override or early-close API. Opening the challenge after rollover snapshots previous scored rounds under a family row lock. All children tied at a positive maximum win; zero-score weeks have no winner. Only current child members appear or make choices. A removed member cannot read or claim; finalized rounds do not assign replacement winners. Unfinalized rounds exclude children who have left or changed role. A rejoining child retains the score already earned in that family/week.
+
+Each winner may choose movie, dinner or outing for themselves, with an explicit confirmation before the immutable choice. Repeated identical requests are idempotent. An Admin or Adult records that the details have been agreed with the child; no external purchases or bookings occur. Pending choices remain visible; confirmed history is visible for 52 weeks. Ranking and choice endpoints expose only the caller's family, never wallet balances, auth data or household finances.
+
+Entry: Today below My Avatar and Settings, all family roles. UI clears on logout/family change, ignores late responses and refreshes on shared task changes/settings membership refresh. Private RLS tables have no client grants; privileged RPCs verify live Auth existence and membership, pin empty search_path and explicitly revoke anonymous execution.
+
+Validation: 46 Node tests, 4 database suites, 9 DOM tests, 4 Python tests pass. New SQL suite also passed on QA with full rollback, covering real task rewards, duplicate completions, spending independence, ties, rollover, immutable choices, invalid rewards, loser/adult/outsider/anonymous rejection, adult confirmation, member removal and grant checks. Browser acceptance of the new challenge remains pending; no claim of authenticated E2E completion.
+
+Manual Ninho+ acceptance reported by Miguel before challenge launch: first routine task, expense/goal totals, child hidden panels, downgrade/read-only retention/reactivation, pause/resume, reload persistence, Adult→Admin updates, +2 task points, no repeat reward, avatar purchases/equip/reload, insufficient funds and Adult plan restrictions passed. Next-day scheduled recurrence still awaits manual observation.
+
+Pricing decision reserved for later: R$12.90 monthly per family or R$150 one-time per family while the service operates, family-linked across administrator changes. This note does not enable payment or change plan entitlement.

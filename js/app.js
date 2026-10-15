@@ -42,10 +42,11 @@ NinhoCloud.onAuthChange((event,session)=>{
 $("#resetPasswordForm").onsubmit=async e=>{e.preventDefault();try{await NinhoCloud.updatePassword($("#newPassword").value);resetPasswordScreen.classList.add("hide");toast("Senha atualizada ✓");history.replaceState({},document.title,location.pathname);const p=await NinhoCloud.profile();NINHO_USER={demo:false,id:p?.id||null,name:p?.name||"Família",managedChild:!!p?.managedChild,email:p?.managedChild?"Conta infantil":p?.email||"",phone:p?.phone||""};await bootCloud()}catch(err){const msg=(err?.message||"").toLowerCase();if(msg.includes("password should contain")||msg.includes("password should be at least")||err?.code==="weak_password")toast("Senha muito fraca. Use pelo menos 8 caracteres, com maiúscula, minúscula, número e símbolo.");else toast(err.message||"Não foi possível atualizar a senha")}};
 $("#resendVerification").onclick=async()=>{try{if(!pendingVerificationEmail)return toast("Informe seu e-mail novamente");const btn=$("#resendVerification");btn.disabled=true;btn.textContent="Enviando...";await NinhoCloud.resendConfirmation(pendingVerificationEmail);$("#verifyStatus").textContent="Novo e-mail enviado ✓ Confira sua caixa de entrada e o spam.";toast("E-mail de confirmação reenviado ✓");setTimeout(()=>{btn.disabled=false;btn.textContent="Reenviar e-mail"},3000)}catch(err){const btn=$("#resendVerification"),msg=(err?.message||"").toLowerCase();if(err?.status===429||err?.code==="over_email_send_rate_limit"||msg.includes("rate limit")||msg.includes("too many")){$("#verifyStatus").textContent="Limite temporário de e-mails atingido. Aguarde alguns minutos antes de reenviar.";toast("Aguarde antes de solicitar outro e-mail.");setTimeout(()=>{btn.disabled=false;btn.textContent="Reenviar e-mail"},60000)}else{btn.disabled=false;btn.textContent="Reenviar e-mail";toast(err.message||"Não foi possível reenviar")}}};
 $("#backToLogin").onclick=()=>{verifyEmailScreen.classList.add("hide");authScreen.classList.remove("hide");authMode="login";$$('[data-auth]').forEach(x=>x.classList.toggle('active',x.dataset.auth==='login'));$("#nameField").classList.add("hide");$("#authSubmit").textContent="Entrar"};
-async function refreshShared(){if(!NINHO_FAMILY.id)return;const shared=await NinhoCloud.loadShared(NINHO_FAMILY.id);data={...data,...shared};localStorage.setItem(K,JSON.stringify(data));render();window.NinhoAvatar?.refresh()}
+async function refreshShared(){if(!NINHO_FAMILY.id)return;const shared=await NinhoCloud.loadShared(NINHO_FAMILY.id);data={...data,...shared};localStorage.setItem(K,JSON.stringify(data));render();window.NinhoAvatar?.refresh();window.NinhoChallenge?.refresh()}
 function showFamilyOnboarding(){
  window.NinhoAvatar?.clear();
  window.NinhoPlus?.clear();
+ window.NinhoChallenge?.clear();
  window.NinhoTutorial?.dismiss(false);
  const child=!!NINHO_USER.managedChild||NINHO_FAMILY.role==="child";
  $("#createFamily").classList.toggle("hide",child);
@@ -57,6 +58,7 @@ function showFamilyOnboarding(){
 async function exitCurrentSession(){
  window.NinhoAvatar?.clear();
  window.NinhoPlus?.clear();
+ window.NinhoChallenge?.clear();
  window.NinhoTutorial?.dismiss(false);
  NinhoCloud.realtime(null);
  localStorage.removeItem(K);data=emptyData();familyActivityItems=[];

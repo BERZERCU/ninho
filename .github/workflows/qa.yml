@@ -27,6 +27,7 @@ jobs:
           node --check js/point-effects.js
           node --check js/plus-utils.js
           node --check js/plus.js
+          node --check js/challenge.js
           node --check js/children.js
           node --check supabase/functions/managed-children/handler.mjs
           node --check supabase/functions/child-login/handler.mjs
@@ -43,7 +44,7 @@ jobs:
         run: node --test tests/close-family.test.cjs
 
       - name: Managed child account security
-        run: node --test tests/children.test.cjs tests/child-access.test.cjs tests/tutorial.test.cjs tests/avatars.test.cjs tests/captcha.test.cjs tests/point-effects.test.cjs tests/plus-utils.test.cjs
+        run: node --test tests/children.test.cjs tests/child-access.test.cjs tests/tutorial.test.cjs tests/avatars.test.cjs tests/captcha.test.cjs tests/point-effects.test.cjs tests/plus-utils.test.cjs tests/challenge.test.cjs
 
       - name: Managed child migration on empty PostgreSQL
         run: |
