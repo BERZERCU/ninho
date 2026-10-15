@@ -32,4 +32,6 @@ test('permission tap registers account subscription and sign out removes it firs
  await ctx.NinhoPush.enable();assert.equal(calls[0],'permission');assert.equal(row.user_id,'user-1');assert.equal(ctx.NinhoPush.isActive(),true);
  ctx.navigator.serviceWorker.getRegistration=async()=>({pushManager:{getSubscription:async()=>sub}});
  await ctx.NinhoCloud.signOut();assert.deepEqual(calls.slice(-3),['delete','unsubscribe','signout']);
+ table.then=resolve=>resolve({error:Error('deleted account')});
+ await ctx.NinhoCloud.signOut();assert.deepEqual(calls.slice(-3),['delete','unsubscribe','signout']);
 });

@@ -17,3 +17,12 @@ test('deleted child exits session and onboarding instead of getting stuck',async
 test('onboarding exit works without a family',async()=>{const h=harness();await h.context.bootCloud();await h.$('#onboardingLogout').onclick();assert.equal(h.signedOut(),1);assert.equal(h.$('#onboarding').classList.contains('hide'),true)});
 test('network failure does not sign out an offline user',async()=>{const h=harness({offline:true});await assert.rejects(h.context.refreshMembership(),/network/);assert.equal(h.signedOut(),0);assert.equal(h.context.NINHO_USER.id,'child')});
 test('adult onboarding retains family creation',async()=>{const h=harness({child:false});await h.context.bootCloud();assert.equal(h.$('#createFamily').classList.contains('hide'),false)});
+test('Auth deletion clears identity but a network error is propagated',async()=>{
+ let response={data:{user:null},error:{status:404,code:'user_not_found'}};
+ const sb={auth:{getUser:async()=>response}};
+ const context={window:{NINHO_CONFIG:{supabaseUrl:'https://backend.example',supabasePublishableKey:'public'},supabase:{createClient:()=>sb},localStorage:{}}};
+ vm.runInNewContext(fs.readFileSync('js/cloud.js','utf8'),context);
+ assert.equal(await context.window.NinhoCloud.user(),null);
+ response={data:{user:null},error:{name:'AuthRetryableFetchError',status:0}};
+ await assert.rejects(context.window.NinhoCloud.user());
+});
