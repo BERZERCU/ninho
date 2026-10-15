@@ -5,8 +5,8 @@
  const allowed=()=>!NINHO_USER.demo&&!!NINHO_USER.id&&!!NINHO_FAMILY.id;
  const context=()=>({user:NINHO_USER.id,family:NINHO_FAMILY.id,version});
  const same=c=>allowed()&&c.user===NINHO_USER.id&&c.family===NINHO_FAMILY.id&&c.version===version;
- const entry=document.createElement('button');entry.type='button';entry.className='challenge-entry hide';entry.innerHTML='<span>🏆</span><span><b>Conquista da semana</b><small>Pequenas ajudas, momentos em família</small></span><span>›</span>';
- const avatarEntry=document.querySelector('#avatarEntry');if(avatarEntry)avatarEntry.after(entry);else document.querySelector('#today').prepend(entry);
+ const entry=document.createElement('button');entry.type='button';entry.className='round challenge-entry hide';entry.id='challengeBtn';entry.setAttribute('aria-label','Conquista da semana');entry.title='Conquista da semana';entry.textContent='🏆';
+ document.querySelector('#activityBtn').before(entry);
  const group=document.createElement('div');group.className='settings-group hide';group.innerHTML='<button class="setting-row" data-challenge-open><i>🏆</i><span><b>Conquista da semana</b><small>Pontos das crianças e momentos em família</small></span><em>›</em></button>';
  document.querySelector('#subscriptionBtn').closest('.settings-group').before(group);
  function visible(){entry.classList.toggle('hide',!allowed());group.classList.toggle('hide',!allowed())}

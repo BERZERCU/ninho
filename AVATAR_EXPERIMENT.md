@@ -70,7 +70,7 @@ Weeks run Monday 00:00 through Sunday in America/Sao_Paulo. Server time exclusiv
 
 Each winner may choose movie, dinner or outing for themselves, with an explicit confirmation before the immutable choice. Repeated identical requests are idempotent. An Admin or Adult records that the details have been agreed with the child; no external purchases or bookings occur. Pending choices remain visible; confirmed history is visible for 52 weeks. Ranking and choice endpoints expose only the caller's family, never wallet balances, auth data or household finances.
 
-Entry: Today below My Avatar and Settings, all family roles. UI clears on logout/family change, ignores late responses and refreshes on shared task changes/settings membership refresh. Private RLS tables have no client grants; privileged RPCs verify live Auth existence and membership, pin empty search_path and explicitly revoke anonymous execution.
+Entry: trophy button beside the notification bell in the header and Settings, all family roles. UI clears on logout/family change, ignores late responses and refreshes on shared task changes/settings membership refresh. Private RLS tables have no client grants; privileged RPCs verify live Auth existence and membership, pin empty search_path and explicitly revoke anonymous execution.
 
 Validation: 46 Node tests, 4 database suites, 9 DOM tests, 4 Python tests pass. New SQL suite also passed on QA with full rollback, covering real task rewards, duplicate completions, spending independence, ties, rollover, immutable choices, invalid rewards, loser/adult/outsider/anonymous rejection, adult confirmation, member removal and grant checks. Browser acceptance of the new challenge remains pending; no claim of authenticated E2E completion.
 
