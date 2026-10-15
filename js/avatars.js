@@ -11,9 +11,9 @@
  document.querySelector('#today').prepend(entry);
  const settings=document.createElement('button');settings.type='button';settings.className='setting-row';settings.innerHTML='<i>✨</i><span><b>Meu avatar e pontos</b><small>Guarda-roupa e lojinha da família</small></span><em>›</em>';
  document.querySelector('#tutorialBtn').before(settings);
- const clear=()=>{state=null;owner='';family='';entry.classList.add('hide');entry.querySelector('.avatar-entry-picture').innerHTML='';const closet=document.querySelector('#avatarCloset');if(closet)closet.innerHTML=''};
+ const clear=()=>{window.NinhoPointEffects?.clear();state=null;owner='';family='';entry.classList.add('hide');entry.querySelector('.avatar-entry-picture').innerHTML='';const closet=document.querySelector('#avatarCloset');if(closet)closet.innerHTML=''};
  async function rpc(name,args){const r=await NinhoCloud.sb.rpc(name,args);if(r.error)throw r.error;return r.data}
- function setState(next,c){if(!unchanged(c))return false;state=next;owner=c.user;family=c.family;entry.classList.remove('hide');entry.querySelector('.avatar-entry-picture').innerHTML=draw(state);document.querySelector('#avatarEntryPoints').textContent=`${state.balance} ${state.balance===1?'ponto':'pontos'} · ${state.mode==='plus'?'bônus 2×':'1 ponto por tarefa'}`;render();return true}
+ function setState(next,c){if(!unchanged(c))return false;const previous=current()?state:null;state=next;owner=c.user;family=c.family;entry.classList.remove('hide');entry.querySelector('.avatar-entry-picture').innerHTML=draw(state);document.querySelector('#avatarEntryPoints').textContent=`${state.balance} ${state.balance===1?'ponto':'pontos'} · ${state.mode==='plus'?'bônus 2×':'1 ponto por tarefa'}`;render();requestAnimationFrame(()=>{if(unchanged(c))window.NinhoPointEffects?.play(previous,next)});return true}
  async function refresh(){
   if(!valid()){clear();return null}
   const c=context();if(loading&&loading.user===c.user&&loading.family===c.family)return loading.promise;
@@ -47,7 +47,7 @@
   if(b.dataset.avatarSlot){slot=b.dataset.avatarSlot;renderCloset();return}
   if(busy||!current()||!state)return;
   let name,args;const c=context();
-  if(b.dataset.avatarBuy){const item=state.catalog.find(i=>i.id===b.dataset.avatarBuy);if(!item)return;const ok=await askConfirm({title:'Trocar seus pontos?',message:`${item.name} custa ${pointLabel(item.price)} e ficará no seu guarda-roupa.`,confirmLabel:'Trocar pontos',icon:'✦',danger:false});if(!ok||!unchanged(c))return;name='qa_avatar_buy';args={p_item:item.id}}
+  if(b.dataset.avatarBuy){window.NinhoPointEffects?.remember(b);const item=state.catalog.find(i=>i.id===b.dataset.avatarBuy);if(!item)return;const ok=await askConfirm({title:'Trocar seus pontos?',message:`${item.name} custa ${pointLabel(item.price)} e ficará no seu guarda-roupa.`,confirmLabel:'Trocar pontos',icon:'✦',danger:false});if(!ok||!unchanged(c))return;name='qa_avatar_buy';args={p_item:item.id}}
   else if(b.dataset.avatarEquip){name='qa_avatar_equip';args={p_item:b.dataset.avatarEquip}}
   else if(b.dataset.avatarSkin){name='qa_avatar_skin';args={p_skin:b.dataset.avatarSkin}}
   else if(b.dataset.avatarPlan){name='qa_avatar_simulate_plan';args={p_mode:b.dataset.avatarPlan}}
@@ -57,5 +57,6 @@
   catch(err){if(unchanged(c))toast(err.message||'Não foi possível atualizar seu avatar')}
   finally{busy=false;if(unchanged(c))renderCloset()}
  });
+ document.addEventListener('click',e=>{const button=e.target.closest?.('#completeTaskBtn,button[onclick^="task("]');if(button)window.NinhoPointEffects?.remember(button)},true);
  window.NinhoAvatar={refresh,clear,member};refresh();
 })();
