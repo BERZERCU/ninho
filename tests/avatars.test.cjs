@@ -18,3 +18,10 @@ test('QA config stays isolated and experiment migration cannot be auto-applied t
  assert.equal(fs.readdirSync('supabase/migrations').filter(n=>n.includes('avatar')).length,0);
  assert(fs.readdirSync('supabase/experiments/migrations').some(n=>n.includes('qa_avatar_rewards')));
 });
+
+test('cap tucks hair underneath and removing it restores the chosen hairstyle',()=>{
+ const chosen={skin:'medium',equipped:{hair:'hair_curls',accessory:'accessory_cap'}};
+ const worn=draw(chosen);assert(!worn.includes('M27 58C17 52'));
+ const removed=draw({...chosen,equipped:{...chosen.equipped,accessory:'accessory_none'}});
+ assert(removed.includes('M27 58C17 52'));assert.equal(chosen.equipped.hair,'hair_curls');
+});
