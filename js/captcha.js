@@ -18,13 +18,20 @@ window.NinhoCaptcha=(()=>{
    s.widgetId=window.turnstile.render(target,{
     sitekey:cfg.turnstileSiteKey,
     theme:"light",
-    language:"pt-BR",
+    language:"pt-br",
     size:"flexible",
     appearance:"interaction-only",
     callback:value=>{s.token=value||"";status(name,"Verificação de segurança concluída ✓","ok")},
     "expired-callback":()=>{s.token="";status(name,"A verificação expirou. Aguarde uma nova validação.","warn")},
     "timeout-callback":()=>{s.token="";status(name,"A verificação expirou. Tente novamente.","warn")},
-    "error-callback":()=>{s.token="";status(name,"Não foi possível concluir a verificação de segurança. Tente novamente.","error");return true}
+    "error-callback":code=>{
+     s.token="";
+     const value=String(code||""),safe=/^[0-9]{6}$/.test(value)?value:"";
+     const message=safe==="110200"?"Este endereço do Ninho precisa ser autorizado no Turnstile. Avise o responsável pelo aplicativo.":"Não foi possível concluir a verificação de segurança. Tente novamente.";
+     status(name,message+(safe?" Código: "+safe+".":""),"error");
+     if(safe)console.warn("Ninho Turnstile: "+safe);
+     return true;
+    }
    });
    status(name,"Proteção contra robôs ativa.","ready");
   }catch(err){
