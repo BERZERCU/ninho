@@ -6,7 +6,7 @@ function harness({deleted=false,offline=false,child=true}={}){
  const elements=new Map();
  const $=selector=>{if(!elements.has(selector)){const classes=new Set(['hide','open']);elements.set(selector,{value:'OLD-CODE',textContent:'',classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x),toggle:(x,v)=>v?classes.add(x):classes.delete(x)}})}return elements.get(selector)};
  let signedOut=0,channels=[];
- const context={$, $$:()=>[],NINHO_USER:{id:'child',managedChild:child},NINHO_FAMILY:{id:'old',role:child?'child':'adult'},K:'old-data',data:{},familyActivityItems:[],emptyData:()=>({members:[],tasks:[],events:[],shopping:[]}),useUserStorage(){},localStorage:{removeItem(){},setItem(){}},render(){},updateActivityBadge(){},refreshSettings(){},console,
+ const context={window:{},$, $$:()=>[],NINHO_USER:{id:'child',managedChild:child},NINHO_FAMILY:{id:'old',role:child?'child':'adult'},K:'old-data',data:{},familyActivityItems:[],emptyData:()=>({members:[],tasks:[],events:[],shopping:[]}),useUserStorage(){},localStorage:{removeItem(){},setItem(){}},render(){},updateActivityBadge(){},refreshSettings(){},console,
  NinhoCloud:{async user(){if(offline)throw Error('network unavailable');return deleted?null:{id:'child'}},async loadFamily(){return null},realtime:id=>channels.push(id),async signOut(){signedOut++}},
  authScreen:$('#authScreen'),verifyEmailScreen:$('#verifyEmailScreen'),resetPasswordScreen:$('#resetPasswordScreen'),onboarding:$('#onboarding')};
  const src=fs.readFileSync('js/app.js','utf8');vm.createContext(context);vm.runInContext(src.slice(src.indexOf('function showFamilyOnboarding()'),src.indexOf('$("#createFamily").onclick=')),context);
