@@ -64,8 +64,8 @@ window.NinhoPush=(()=>{
    try{await preference(enabled);}catch{const p=notificationPrefs();p.family=!enabled;localStorage.setItem(notificationKey(),JSON.stringify(p));e.target.checked=!enabled;toast('Não foi possível salvar no celular. Tente novamente');}finally{e.target.disabled=false;}
   });
   const signOut=NinhoCloud.signOut;
-  NinhoCloud.signOut=async()=>{await disable();return signOut();};
-  document.querySelector('#logoutBtn').onclick=async()=>{try{await NinhoCloud.signOut();location.reload();}catch{toast('Não foi possível sair com segurança. Confira a conexão e tente novamente');}};
+  NinhoCloud.signOut=async()=>{try{await disable();}catch{try{await (await current())?.unsubscribe();}catch{}}return signOut();};
+  document.querySelector('#logoutBtn').onclick=()=>exitCurrentSession();
   // Only read subscription status; never prompt or resubscribe automatically.
   let lastUser='';
   const timer=setInterval(async()=>{
