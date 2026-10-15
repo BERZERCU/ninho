@@ -40,3 +40,24 @@ No real purchases, payment integration or production changes are included. Price
 9. Check the avatar in the family members list from another test account; it refreshes on focus and periodic membership refresh.
 
 Promotion to the original requires separate approval after user validation and a production entitlement design for the 2× bonus.
+
+## Ninho+ feature lab
+
+Added recurring tasks, household expense records, savings goals and provisional member limits. Free is 4 members; simulated plus is 12, including children. Existing members are preserved on downgrade; only new entries are blocked. The independent five-managed-children-per-guardian protection remains in place.
+
+Settings includes **Rotinas recorrentes**, **Finanças da casa** and **Plano e integrantes** for adults. Only the Admin can switch the simulated plan. Child accounts cannot read finance or routine configuration through the RPC API. Existing generated tasks remain visible according to normal family permissions.
+
+Routines support daily, weekly and monthly schedules in America/Sao_Paulo. Monthly scheduling preserves the original anchor (31 Jan → 28 Feb → 31 Mar; leap years are supported). A unique occurrence key and row locking prevent duplicate generation. Creating a routine due today generates its first task immediately; a QA-only pg_cron job runs every 10 minutes thereafter. Pause stops future generation. Downgrade suspends generation; re-upgrade resumes from the current schedule rather than accumulating the unpaid period.
+
+Finances are manual records only, stored in integer BRL cents. Monthly category summaries and savings goals are shared with Admins and Adults. Archiving hides a record rather than physically deleting it. On downgrade, adults retain read access to history; writes require simulated plus. No bank integration, money movement, real subscription or price change is included.
+
+QA scheduler installation (never run against production):
+
+```sql
+select cron.schedule('qa-plus-recurring','*/10 * * * *',
+  $$select private.qa_materialize_routines((now() at time zone 'America/Sao_Paulo')::date);$$);
+```
+
+The migration is under `supabase/experiments/migrations/20261015155325_qa_plus_features.sql`. `tests/plus-security.sql` verifies recurrence idempotency, calendars, pause/downgrade, capacity, cents, private data isolation, cross-family access and history retention using rollback fixtures.
+
+Manual acceptance is still required for the new screens and the next scheduled execution. This remains a QA-only draft; do not merge the branch into main or promote it to the original.

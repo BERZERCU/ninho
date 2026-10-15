@@ -45,6 +45,7 @@ $("#backToLogin").onclick=()=>{verifyEmailScreen.classList.add("hide");authScree
 async function refreshShared(){if(!NINHO_FAMILY.id)return;const shared=await NinhoCloud.loadShared(NINHO_FAMILY.id);data={...data,...shared};localStorage.setItem(K,JSON.stringify(data));render();window.NinhoAvatar?.refresh()}
 function showFamilyOnboarding(){
  window.NinhoAvatar?.clear();
+ window.NinhoPlus?.clear();
  window.NinhoTutorial?.dismiss(false);
  const child=!!NINHO_USER.managedChild||NINHO_FAMILY.role==="child";
  $("#createFamily").classList.toggle("hide",child);
@@ -55,6 +56,7 @@ function showFamilyOnboarding(){
 }
 async function exitCurrentSession(){
  window.NinhoAvatar?.clear();
+ window.NinhoPlus?.clear();
  window.NinhoTutorial?.dismiss(false);
  NinhoCloud.realtime(null);
  localStorage.removeItem(K);data=emptyData();familyActivityItems=[];
