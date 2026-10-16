@@ -99,3 +99,9 @@ Added Deku (masked, scarf, green lightning), Heisenberg (hat, glasses, goatee, j
 ## Set equip animation (16 October)
 
 Confirmed full-set equips trigger a two-second, enlarged collectible reveal with a small tilt/settle, soft aura and sparkles. Overlay is pointer-transparent and does not steal focus, play sound or change wallet state. Initial loads, purchases and normal piece equips do not animate. Reduced-motion preference shows a brief static confirmation without movement. Logout/family clear removes the reveal and timer. DOM flow checks animation only after equip and cleanup on identity clear. QA only.
+
+## Owner-only test point command (16 October)
+
+QA-only server allowlist enrolled separately for the explicitly authorized account by immutable Auth ID; no public API/client toggle to enroll. A newly completed task whose entire title matches `pontos = N` grants N virtual shop points, 1–100000 per task. The actor must be the allowlisted Admin/Adult, task creator, current family member and assignee (or unassigned). Other accounts cannot activate it or redirect credits to children. Account metadata does not authorize it.
+
+Credits consume the original single-use reward ledger with zero competitive points and write a private audit ledger. Toggle, title changes and deletion/recreation with the same task ID cannot repeat credit. Normal task rewards are unchanged. Wallet and lifetime earned counters increase, but the child weekly ranking does not. Private tables use RLS plus revoked client grants; function is private, definer, empty search_path, no direct client execution. No production support, real money, pricing or payment changes. Six DB suites pass including authorized/unauthorized commands, recipient restrictions, range, metadata spoofing, audit, duplicate prevention and normal child scores.
