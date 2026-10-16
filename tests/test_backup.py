@@ -55,10 +55,16 @@ class BackupTests(unittest.TestCase):
         self.assertIn('"a""b"',sql)
         self.assertIn('USING (owner = auth.uid()) WITH CHECK (owner = auth.uid())',sql)
 
+    def test_private_wallet_and_finance_are_fingerprinted(self):
+        query=backup.fingerprint_query(['ninho_avatar_wallets','ninho_expenses'])
+        self.assertIn('private."ninho_avatar_wallets"',query)
+        self.assertIn('private."ninho_expenses"',query)
+
     def test_full_export_pipeline_with_private_photo(self):
         inventory={'objects':[{'bucket':'task-proofs','name':'family/task/photo.jpg','metadata':{}}],'buckets':[{'id':'task-proofs','public':False}],'proof_paths':['family/task/photo.jpg'],'storage_policies':[],'extensions':[],'cron':[]}
         secrets=[{'name':name,'secret':'synthetic-test-secret'} for name in ['ninho_push_public','ninho_push_private','ninho_push_dispatch']]
         def fake_sql(url,query):
+            if 'pg_tables' in query:return ['ninho_avatar_wallets','ninho_expenses']
             if 'decrypted_secrets' in query:return secrets
             if 'proof_paths' in query:return inventory
             return [{'name':'tasks','rows':1,'digest':'stable'}]
