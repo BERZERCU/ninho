@@ -81,3 +81,5 @@ Pricing decision reserved for later: R$12.90 monthly per family or R$150 one-tim
 ## Reference outfit (16 October)
 
 Added `top_guardian` / Guardião Esmeralda for 12 points, a hand-drawn vector adaptation of the supplied outfit reference: dark green uniform, worn golden scarf, burgundy sleeves, light gloves and belt pouches. Fits the established chibi paper-sticker body; uses existing hair/skin/accessory choices. Additive QA-only catalog migration, no grants, wallet or inventory changes. Visual SVG render reviewed; existing avatar tests passed. Browser purchase/equip acceptance pending.
+
+Added a separate `accessory_guardian_mask` / Máscara do Guardião, 8 points: green hood, raised tips, dark eye panels and grey vented mouth guard. Hair is tucked away while equipped and restored on removal; compatible with all tops and skin tones. Hand-drawn SVG reviewed, avatar checks passed, QA-only additive catalog migration.
