@@ -1,7 +1,7 @@
 (()=>{
  // This experiment cannot initialize against the original backend.
  if(window.NINHO_CONFIG?.avatarExperiment!==true||window.NINHO_CONFIG?.supabaseUrl!=='https://mqpjujirwooqzzirzwrr.supabase.co')return;
- let state=null,owner='',family='',tab='owned',slot='top',busy=false,loading=null;
+ let state=null,owner='',family='',tab='owned',slot='top',busy=false,loading=null,revealTimer=null;
  const draw=window.NinhoAvatarArt.draw;
  const valid=()=>!NINHO_USER.demo&&NINHO_USER.id&&NINHO_FAMILY.id;
  const current=()=>valid()&&owner===NINHO_USER.id&&family===NINHO_FAMILY.id;
@@ -11,7 +11,13 @@
  document.querySelector('#today').prepend(entry);
  const settings=document.createElement('button');settings.type='button';settings.className='setting-row';settings.innerHTML='<i>✨</i><span><b>Meu avatar e pontos</b><small>Guarda-roupa e lojinha da família</small></span><em>›</em>';
  document.querySelector('#tutorialBtn').before(settings);
- const clear=()=>{window.NinhoPointEffects?.clear();state=null;owner='';family='';entry.classList.add('hide');entry.querySelector('.avatar-entry-picture').innerHTML='';const closet=document.querySelector('#avatarCloset');if(closet)closet.innerHTML=''};
+ function clearReveal(){if(revealTimer!==null)clearTimeout(revealTimer);revealTimer=null;document.querySelector('.avatar-set-reveal')?.remove()}
+ function revealSet(next){
+  clearReveal();const item=next.catalog.find(i=>i.slot==='set'&&i.id===next.equipped.set);if(!item)return;
+  const box=document.createElement('div');box.className='avatar-set-reveal';box.setAttribute('role','status');box.setAttribute('aria-live','polite');box.innerHTML=`<div class="avatar-reveal-aura" aria-hidden="true"></div><span class="avatar-reveal-spark spark-one" aria-hidden="true">✦</span><span class="avatar-reveal-spark spark-two" aria-hidden="true">✧</span><span class="avatar-reveal-spark spark-three" aria-hidden="true">✦</span><div class="avatar-reveal-figure" aria-hidden="true">${draw(next)}</div><div class="avatar-reveal-label"><small>VISUAL EQUIPADO</small><b>${esc(item.name)}</b></div>`;document.body.append(box);
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;revealTimer=setTimeout(clearReveal,reduced?1100:2000);
+ }
+ const clear=()=>{clearReveal();window.NinhoPointEffects?.clear();state=null;owner='';family='';entry.classList.add('hide');entry.querySelector('.avatar-entry-picture').innerHTML='';const closet=document.querySelector('#avatarCloset');if(closet)closet.innerHTML=''};
  async function rpc(name,args){const r=await NinhoCloud.sb.rpc(name,args);if(r.error)throw r.error;return r.data}
  function setState(next,c){if(!unchanged(c))return false;const previous=current()?state:null;state=next;owner=c.user;family=c.family;entry.classList.remove('hide');entry.querySelector('.avatar-entry-picture').innerHTML=draw(state);document.querySelector('#avatarEntryPoints').textContent=`${state.balance} ${state.balance===1?'ponto':'pontos'} · ${state.mode==='plus'?'bônus 2×':'1 ponto por tarefa'}`;render();requestAnimationFrame(()=>{if(unchanged(c))window.NinhoPointEffects?.play(previous,next)});return true}
  async function refresh(){
@@ -53,7 +59,7 @@
   else if(b.dataset.avatarPlan){name='qa_avatar_simulate_plan';args={p_mode:b.dataset.avatarPlan}}
   else return;
   busy=true;renderCloset();
-  try{const next=await rpc(name,{p_family:c.family,...args});if(setState(next,c))toast(name==='qa_avatar_buy'?'Item guardado! Agora você pode vestir ✓':name==='qa_avatar_simulate_plan'?'Simulação atualizada, sem cobrança ✓':'Avatar atualizado ✓')}
+  try{const next=await rpc(name,{p_family:c.family,...args});if(setState(next,c)){if(name==='qa_avatar_equip'&&next.equipped?.set===args.p_item)revealSet(next);toast(name==='qa_avatar_buy'?'Item guardado! Agora você pode vestir ✓':name==='qa_avatar_simulate_plan'?'Simulação atualizada, sem cobrança ✓':'Avatar atualizado ✓')}}
   catch(err){if(unchanged(c))toast(err.message||'Não foi possível atualizar seu avatar')}
   finally{busy=false;if(unchanged(c))renderCloset()}
  });

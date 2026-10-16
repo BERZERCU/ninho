@@ -95,3 +95,7 @@ New SQL rollback suite tests both complete purchases, idempotence, owned equip, 
 ## Three more complete sets (16 October)
 
 Added Deku (masked, scarf, green lightning), Heisenberg (hat, glasses, goatee, jacket and blue prop bag), Gus Fring (glasses, yellow shirt, tie and brown trousers), each 20 virtual points. Lisbon and Patrick Jane remain unchanged and available. No individual pieces or new purchase endpoints. All five fixed vector renderers are covered by the safe rendering test; transactional security tests buy and equip all three new sets and verify exact debit while retaining both earlier sets. Artwork rendered and visually inspected. QA only; browser acceptance pending.
+
+## Set equip animation (16 October)
+
+Confirmed full-set equips trigger a two-second, enlarged collectible reveal with a small tilt/settle, soft aura and sparkles. Overlay is pointer-transparent and does not steal focus, play sound or change wallet state. Initial loads, purchases and normal piece equips do not animate. Reduced-motion preference shows a brief static confirmation without movement. Logout/family clear removes the reveal and timer. DOM flow checks animation only after equip and cleanup on identity clear. QA only.
