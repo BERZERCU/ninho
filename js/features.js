@@ -8,7 +8,7 @@ let subscribedFamilyId=null;
 window.familyActivityItems=familyActivityItems;
 
 window.activityMeta=function(item){
-  const actor=item.actor_id===NINHO_USER.id?"Você":mem(item.actor_id).name;
+  const actor=!item.actor_id?"Ninho":item.actor_id===NINHO_USER.id?"Você":mem(item.actor_id).name;
   const title=item.title?`“${item.title}”`:"";
   const labels={task:"tarefa",event:"compromisso",shopping:"item de compras",member:"membro"};
   const label=labels[item.entity_type]||"item";

@@ -22,6 +22,13 @@ jobs:
         run: |
           node --check js/app.js
           node --check js/tutorial.js
+          node --check js/avatar-sets-art.js
+          node --check js/avatar-art.js
+          node --check js/avatars.js
+          node --check js/point-effects.js
+          node --check js/plus-utils.js
+          node --check js/plus.js
+          node --check js/challenge.js
           node --check js/children.js
           node --check supabase/functions/managed-children/handler.mjs
           node --check supabase/functions/child-login/handler.mjs
@@ -38,12 +45,17 @@ jobs:
         run: node --test tests/close-family.test.cjs
 
       - name: Managed child account security
-        run: node --test tests/children.test.cjs tests/child-access.test.cjs tests/tutorial.test.cjs
+        run: node --test tests/children.test.cjs tests/child-access.test.cjs tests/tutorial.test.cjs tests/avatars.test.cjs tests/captcha.test.cjs tests/point-effects.test.cjs tests/plus-utils.test.cjs tests/challenge.test.cjs
 
       - name: Managed child migration on empty PostgreSQL
         run: |
           npm ci --prefix tests/db --ignore-scripts --no-audit --no-fund
           npm test --prefix tests/db
+
+      - name: Ninho+ experiment form behavior
+        run: |
+          npm ci --prefix tests/ui --ignore-scripts --no-audit --no-fund
+          npm test --prefix tests/ui
 
       - name: Web Push behavior
         run: node --test tests/push.test.cjs

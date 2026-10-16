@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+const source=fs.readFileSync('js/challenge.js','utf8');
+test('weekly challenge cannot initialize on original backend or without QA flag',()=>{for(const config of [{avatarExperiment:true,supabaseUrl:'https://cspwqboqchwdsknfdakh.supabase.co'},{avatarExperiment:false,supabaseUrl:'https://mqpjujirwooqzzirzwrr.supabase.co'},{}])assert.doesNotThrow(()=>vm.runInNewContext(source,{window:{NINHO_CONFIG:config}}))});
+test('weekly experiment is cached and its migration stays outside production migration directory',()=>{assert.match(fs.readFileSync('sw.js','utf8'),/js\/challenge\.js/);assert.match(fs.readFileSync('index.html','utf8'),/src="js\/challenge\.js"/);assert(!fs.existsSync('supabase/migrations/20261015174357_qa_weekly_challenge.sql'));assert(fs.existsSync('supabase/experiments/migrations/20261015174357_qa_weekly_challenge.sql'))});
