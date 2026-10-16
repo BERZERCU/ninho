@@ -1,12 +1,12 @@
 begin;
 do $$
-declare a uuid:=extensions.gen_random_uuid();c uuid:=extensions.gen_random_uuid();o uuid:=extensions.gen_random_uuid();f uuid;s jsonb;blocked boolean;
+declare a uuid:=extensions.gen_random_uuid();c uuid:=extensions.gen_random_uuid();o uuid:=extensions.gen_random_uuid();f uuid;s jsonb;blocked boolean;item text;
 begin
  insert into auth.users(id,email) values(a,a::text||'@qa.invalid'),(c,c::text||'@qa.invalid'),(o,o::text||'@qa.invalid');
  perform set_config('request.jwt.claim.sub',a::text,true);f:=(public.create_family('QA complete sets')->>'family_id')::uuid;
  insert into public.family_members(family_id,user_id,role) values(f,c,'child');
  perform set_config('request.jwt.claim.sub',c::text,true);s:=public.qa_avatar_state(f);
- if (select count(*) from private.qa_avatar_catalog where slot='set')<>2 then raise exception 'TEST FAILED: exact two sets';end if;
+ if (select count(*) from private.qa_avatar_catalog where slot='set')<>5 then raise exception 'TEST FAILED: five sets retain Lisbon and Jane';end if;
  blocked:=false;begin perform public.qa_avatar_equip(f,'set_lisbon');exception when others then blocked:=true;end;
  if not blocked then raise exception 'TEST FAILED: unowned equip';end if;
  blocked:=false;begin perform public.qa_avatar_buy(f,'set_lisbon');exception when others then blocked:=true;end;
@@ -24,6 +24,12 @@ begin
  if (s->>'balance')::int<>5 or s->'equipped'->>'set'<>'set_jane' then raise exception 'TEST FAILED: second set';end if;
  s:=public.qa_avatar_equip(f,'hair_brown');
  if s->'equipped'->>'set' is not null or s->'equipped'->>'top'<>'top_sage' then raise exception 'TEST FAILED: preserved custom style';end if;
+ update private.qa_avatar_wallets set balance=65 where user_id=c;
+ foreach item in array array['set_deku','set_heisenberg','set_gus'] loop
+  s:=public.qa_avatar_buy(f,item);s:=public.qa_avatar_equip(f,item);
+  if s->'equipped'->>'set'<>item then raise exception 'TEST FAILED: new character equip';end if;
+ end loop;
+ if (s->>'balance')::int<>5 then raise exception 'TEST FAILED: new character prices';end if;
  perform public.qa_avatar_equip(f,'set_lisbon');
  perform set_config('request.jwt.claim.sub',a::text,true);s:=public.qa_avatar_state(f);
  if not exists(select 1 from jsonb_array_elements(s->'members') m where m->>'id'=c::text and m->'equipped'->>'set'='set_lisbon') then raise exception 'TEST FAILED: family preview';end if;
