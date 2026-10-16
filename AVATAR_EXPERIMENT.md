@@ -77,3 +77,7 @@ Validation: 46 Node tests, 4 database suites, 9 DOM tests, 4 Python tests pass. 
 Manual Ninho+ acceptance reported by Miguel before challenge launch: first routine task, expense/goal totals, child hidden panels, downgrade/read-only retention/reactivation, pause/resume, reload persistence, Adult→Admin updates, +2 task points, no repeat reward, avatar purchases/equip/reload, insufficient funds and Adult plan restrictions passed. Next-day scheduled recurrence still awaits manual observation.
 
 Pricing decision reserved for later: R$12.90 monthly per family or R$150 one-time per family while the service operates, family-linked across administrator changes. This note does not enable payment or change plan entitlement.
+
+## Reference outfit (16 October)
+
+Added `top_guardian` / Guardião Esmeralda for 12 points, a hand-drawn vector adaptation of the supplied outfit reference: dark green uniform, worn golden scarf, burgundy sleeves, light gloves and belt pouches. Fits the established chibi paper-sticker body; uses existing hair/skin/accessory choices. Additive QA-only catalog migration, no grants, wallet or inventory changes. Visual SVG render reviewed; existing avatar tests passed. Browser purchase/equip acceptance pending.
