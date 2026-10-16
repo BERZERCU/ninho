@@ -23,7 +23,7 @@
  const pointLabel=n=>`${n} ${n===1?'ponto':'pontos'}`;
  function renderCloset(){
   if(!current()||!state||!document.querySelector('#avatarCloset'))return;
-  const items=state.catalog.filter(c=>c.slot===slot&&(tab==='shop'||c.owned));
+  const items=state.catalog.filter(c=>c.slot===slot&&(tab==='shop'||c.owned)&&(tab!=='shop'||!['top_guardian','accessory_guardian_mask'].includes(c.id)));
   document.querySelector('#avatarCloset').innerHTML=`<div class="avatar-hero"><div class="avatar-hero-picture">${draw(state)}</div><div><span class="avatar-kicker">DO SEU JEITO</span><h3>Pequenas tarefas.<br>Grandes conquistas.</h3><div class="avatar-balance">✦ ${pointLabel(state.balance)}</div><p>${pointLabel(state.earned)} conquistados ao todo</p></div></div>
   <p class="avatar-rules">${state.mode==='plus'?'Bônus Ninho+ simulado: 2 pontos':'Gratuito: 1 ponto'} por tarefa, uma única vez, para o responsável pela tarefa. Sem responsável definido, ganha quem concluir.</p>
   <div class="avatar-skin"><b>Tom de pele</b>${['light','medium','deep'].map((s,i)=>`<button type="button" data-avatar-skin="${s}" aria-label="Tom ${['claro','médio','escuro'][i]}" aria-pressed="${state.skin===s}" class="skin-${s} ${state.skin===s?'selected':''}" ${busy?'disabled':''}></button>`).join('')}</div>
