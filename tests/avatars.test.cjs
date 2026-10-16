@@ -25,3 +25,9 @@ test('cap tucks hair underneath and removing it restores the chosen hairstyle',(
  const removed=draw({...chosen,equipped:{...chosen.equipped,accessory:'accessory_none'}});
  assert(removed.includes('M27 58C17 52'));assert.equal(chosen.equipped.hair,'hair_curls');
 });
+
+test('complete character sets render safely without altering the custom avatar fallback',()=>{
+ const sets=require('../js/avatar-sets-art.js'),art=require('../js/avatar-art.js');
+ for(const id of ['set_lisbon','set_jane']){const svg=art.draw({equipped:{set:id,accessory:'accessory_cap'}});assert.match(svg,/viewBox="0 0 160 200"/);assert.doesNotMatch(svg,/script|onload|href=/);assert.equal(svg,sets.draw(id));}
+ assert.equal(sets.draw('__proto__'),null);assert.equal(sets.draw('<script>'),null);assert.match(art.draw({equipped:{set:'invalid'}}),/viewBox="0 0 120 140"/);
+});

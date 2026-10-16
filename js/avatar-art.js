@@ -3,6 +3,8 @@
  const skins={light:['#f1c8a4','#dc9f7d'],medium:['#c88d62','#ab6d4e'],deep:['#81513e','#633d32']};
  const shirts={top_sage:['#8fae7c','#5a7750','#e9cf8b'],top_sun:['#edbd50','#bc8a35','#fff0bf'],top_ocean:['#7ca9b6','#4a7488','#e0eeea'],top_berry:['#bb8397','#87576b','#f4d3cd'],top_guardian:['#345951','#1f3c37','#d7ba69']};
  function draw(style={}){
+  const sets=typeof module!=='undefined'&&module.exports?require('./avatar-sets-art.js'):root.NinhoAvatarSetsArt;
+  const full=sets?.draw(style.equipped?.set);if(full)return full;
   const e=style.equipped||{},[skin,shade]=skins[style.skin]||skins.medium;
   const [shirt,seam,trim]=shirts[e.top]||shirts.top_sage,ink='#433d35';
   const guardian=e.top==='top_guardian';

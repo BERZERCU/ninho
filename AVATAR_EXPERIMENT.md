@@ -83,3 +83,11 @@ Pricing decision reserved for later: R$12.90 monthly per family or R$150 one-tim
 Added `top_guardian` / Guardião Esmeralda for 12 points, a hand-drawn vector adaptation of the supplied outfit reference: dark green uniform, worn golden scarf, burgundy sleeves, light gloves and belt pouches. Fits the established chibi paper-sticker body; uses existing hair/skin/accessory choices. Additive QA-only catalog migration, no grants, wallet or inventory changes. Visual SVG render reviewed; existing avatar tests passed. Browser purchase/equip acceptance pending.
 
 Added a separate `accessory_guardian_mask` / Máscara do Guardião, 8 points: green hood, raised tips, dark eye panels and grey vented mouth guard. Hair is tucked away while equipped and restored on removal; compatible with all tops and skin tones. Hand-drawn SVG reviewed, avatar checks passed, QA-only additive catalog migration.
+
+## Complete sets preview (16 October)
+
+Only two new complete miniatures: Lisbon (dark suit, credential, folder/phone) and Patrick Jane (blond sculpted hair, waistcoat, blue cup/saucer), manually drawn from the supplied references. Each costs 20 virtual points as ONE catalog item in the new Conjuntos filter. No individual pieces were added for these two characters. Existing Guardian items remain untouched; no third set is included in this preview.
+
+A nullable `qa_avatar_styles.set_id` selects a full character while preserving the previous top/hair/accessory/skin. Equipping a normal owned piece clears the full set and returns to custom styling. Previewing ordinary items clears the full-set layer in that preview only. Purchased sets use the existing wallet row lock and ownership PK: server-priced, insufficient-balance rejection, single debit and retry idempotence. A caller cannot equip someone else's set. Family members receive the active set in their avatar projection; inventories/balances remain private. No production migration or billing changes.
+
+New SQL rollback suite tests both complete purchases, idempotence, owned equip, persistent state, shared family rendering, custom-style restoration and outsider/anonymous blocking. It passes locally; the DOM flow for Conjuntos→Comprar conjunto→Vestir conjunto passes too. New vector silhouettes were rendered and visually reviewed. Authenticated browser acceptance remains pending.
