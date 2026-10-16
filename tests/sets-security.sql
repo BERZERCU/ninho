@@ -1,0 +1,47 @@
+begin;
+do $$
+declare a uuid:=extensions.gen_random_uuid();c uuid:=extensions.gen_random_uuid();o uuid:=extensions.gen_random_uuid();f uuid;s jsonb;blocked boolean;item text;
+begin
+ insert into auth.users(id,email) values(a,a::text||'@qa.invalid'),(c,c::text||'@qa.invalid'),(o,o::text||'@qa.invalid');
+ perform set_config('request.jwt.claim.sub',a::text,true);f:=(public.create_family('QA complete sets')->>'family_id')::uuid;
+ insert into public.family_members(family_id,user_id,role) values(f,c,'child');
+ perform set_config('request.jwt.claim.sub',c::text,true);s:=public.ninho_avatar_state(f);
+ if (select count(*) from private.ninho_avatar_catalog where slot='set')<>5 then raise exception 'TEST FAILED: five sets retain Lisbon and Jane';end if;
+ blocked:=false;begin perform public.ninho_avatar_equip(f,'set_lisbon');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'TEST FAILED: unowned equip';end if;
+ blocked:=false;begin perform public.ninho_avatar_buy(f,'set_lisbon');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'TEST FAILED: insufficient points';end if;
+ update private.ninho_avatar_wallets set balance=45,earned=45 where user_id=c;
+ s:=public.ninho_avatar_buy(f,'set_lisbon');
+ if (s->>'balance')::int<>25 then raise exception 'TEST FAILED: whole set price';end if;
+ s:=public.ninho_avatar_buy(f,'set_lisbon');
+ if (s->>'balance')::int<>25 then raise exception 'TEST FAILED: repeat purchase debit';end if;
+ s:=public.ninho_avatar_equip(f,'set_lisbon');
+ if s->'equipped'->>'set'<>'set_lisbon' then raise exception 'TEST FAILED: equip set';end if;
+ s:=public.ninho_avatar_state(f);
+ if s->'equipped'->>'set'<>'set_lisbon' then raise exception 'TEST FAILED: persistence';end if;
+ s:=public.ninho_avatar_buy(f,'set_jane');s:=public.ninho_avatar_equip(f,'set_jane');
+ if (s->>'balance')::int<>5 or s->'equipped'->>'set'<>'set_jane' then raise exception 'TEST FAILED: second set';end if;
+ s:=public.ninho_avatar_equip(f,'hair_brown');
+ if s->'equipped'->>'set' is not null or s->'equipped'->>'top'<>'top_sage' then raise exception 'TEST FAILED: preserved custom style';end if;
+ update private.ninho_avatar_wallets set balance=65 where user_id=c;
+ foreach item in array array['set_deku','set_heisenberg','set_gus'] loop
+  s:=public.ninho_avatar_buy(f,item);s:=public.ninho_avatar_equip(f,item);
+  if s->'equipped'->>'set'<>item then raise exception 'TEST FAILED: new character equip';end if;
+ end loop;
+ if (s->>'balance')::int<>5 then raise exception 'TEST FAILED: new character prices';end if;
+ perform public.ninho_avatar_equip(f,'set_lisbon');
+ perform set_config('request.jwt.claim.sub',a::text,true);s:=public.ninho_avatar_state(f);
+ if not exists(select 1 from jsonb_array_elements(s->'members') m where m->>'id'=c::text and m->'equipped'->>'set'='set_lisbon') then raise exception 'TEST FAILED: family preview';end if;
+ blocked:=false;begin perform public.ninho_avatar_equip(f,'set_lisbon');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'TEST FAILED: borrowed ownership';end if;
+ perform set_config('request.jwt.claim.sub',o::text,true);
+ blocked:=false;begin perform public.ninho_avatar_buy(f,'set_jane');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'TEST FAILED: outsider';end if;
+ perform set_config('request.jwt.claim.sub','',true);
+ blocked:=false;begin perform public.ninho_avatar_state(f);exception when others then blocked:=true;end;
+ if not blocked then raise exception 'TEST FAILED: anonymous';end if;
+ if has_function_privilege('anon','public.ninho_avatar_equip(uuid,text)','execute') then raise exception 'TEST FAILED: anonymous grant';end if;
+end $$;
+rollback;
+select 'complete set checks passed' as result;

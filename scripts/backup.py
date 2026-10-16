@@ -69,8 +69,11 @@ def sql(db_url, query):
     env = {**os.environ, 'PGDATABASE':db_url, 'PGSSLMODE':'require', 'PGOPTIONS':''}
     return json.loads(run(['psql','--dbname',db_url,'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin="SET default_transaction_read_only=on; SET statement_timeout=120000;\n"+query,env=env,label='database inventory'))
 
-def fingerprint_query():
+def fingerprint_query(private_tables=None):
     parts = [f"SELECT '{t}' AS name,count(*) AS rows,md5(coalesce(string_agg(md5(to_jsonb(x)::text),'' ORDER BY to_jsonb(x)::text),'')) AS digest FROM public.{t} x" for t in TABLES]
+    for table in private_tables or []:
+        label = 'private.'+table
+        parts.append("SELECT '"+label.replace("'","''")+"',count(*),md5(coalesce(string_agg(md5(to_jsonb(x)::text),'' ORDER BY to_jsonb(x)::text),'')) FROM private."+quoted_identifier(table)+" x")
     parts.append("SELECT 'auth.users',count(*),md5(coalesce(string_agg(md5(to_jsonb(x)::text),'' ORDER BY id),'')) FROM auth.users x")
     return "SELECT jsonb_agg(to_jsonb(t) ORDER BY name) FROM ("+' UNION ALL '.join(parts)+") t;"
 
@@ -138,7 +141,8 @@ def backup(output):
         help_text=run(CLI+['db','dump','--help'],label='Supabase CLI help')
         if any(flag not in help_text for flag in ['--schema','--data-only','--role-only','--use-copy']):
             raise BackupError('Supabase CLI flags changed; review the backup script')
-        before=sql(db_url,fingerprint_query())
+        private_tables=sql(db_url,"SELECT coalesce(jsonb_agg(tablename ORDER BY tablename),'[]') FROM pg_tables WHERE schemaname='private' AND tablename<>'push_deliveries';")
+        before=sql(db_url,fingerprint_query(private_tables))
         inventory=sql(db_url,"SELECT jsonb_build_object('buckets',(SELECT coalesce(jsonb_agg(to_jsonb(b)),'[]') FROM storage.buckets b),'objects',(SELECT coalesce(jsonb_agg(jsonb_build_object('bucket',bucket_id,'name',name,'metadata',metadata) ORDER BY bucket_id,name),'[]') FROM storage.objects),'proof_paths',(SELECT coalesce(jsonb_agg(proof_path),'[]') FROM public.tasks WHERE proof_path IS NOT NULL),'storage_policies',(SELECT coalesce(jsonb_agg(to_jsonb(p)),'[]') FROM pg_policies p WHERE schemaname='storage'),'extensions',(SELECT jsonb_agg(extname) FROM pg_extension),'cron',(SELECT coalesce(jsonb_agg(jsonb_build_object('name',jobname,'schedule',schedule,'command',command,'active',active)),'[]') FROM cron.job));")
         for name,flags in [('roles.sql',['--role-only']),('schema.sql',['--schema','public,private']),('data.sql',['--data-only','--use-copy','--schema','public,private,auth,supabase_migrations','--exclude','private.push_deliveries'])]:
             run(CLI+['--workdir',str(work),'db','dump','--db-url',db_url,'--file',str(payload/name)]+flags,label=name)
@@ -160,7 +164,7 @@ def backup(output):
         available={obj['name'] for obj in files if obj['bucket']=='task-proofs'}
         if any(name not in available for name in inventory['proof_paths']):
             raise BackupError('A referenced task photo is missing from Storage')
-        if before!=sql(db_url,fingerprint_query()):
+        if before!=sql(db_url,fingerprint_query(private_tables)):
             raise BackupError('Application data changed during export. Retry during a quiet period')
         inventory['objects']=files
         write_json(payload/'inventory.json',inventory)

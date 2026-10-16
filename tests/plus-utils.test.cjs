@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const {cents,money,editMoney}=require('../js/plus-utils.js');
+test('BRL inputs are stored as exact integer cents',()=>{assert.equal(cents('0,01'),1);assert.equal(cents('123,45'),12345);assert.equal(cents('1.234,56'),123456);assert.equal(cents('5,5'),550);assert.equal(cents('0'),0);assert.equal(editMoney(12345),'123,45');assert.match(money(12345),/123,45/)});
+test('invalid, negative and ambiguous inputs are rejected',()=>{for(const v of ['-1','NaN','1.23','1,234','1e6','',null,'999999999999999999'])assert.throws(()=>cents(v));});
+test('Ninho+ production rejects the QA backend',()=>{const ctx={window:{NINHO_CONFIG:{avatarFeatures:true,supabaseUrl:'https://mqpjujirwooqzzirzwrr.supabase.co'}},document:{createElement(){throw Error('must not initialize')}}};vm.runInNewContext(fs.readFileSync('js/plus.js','utf8'),ctx);assert.equal(ctx.window.NinhoPlus,undefined)});
